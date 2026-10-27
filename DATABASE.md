@@ -21,3 +21,10 @@ Step by step set-up on Hostinger: [`migration/DATABASE-SETUP.md`](migration/DATA
 - Times are stored as `DATETIME` in UTC. The marketing data layer turns them into ISO strings; the portal code reads them as `YYYY-MM-DD HH:MM:SS` text.
 - JSON is kept in `LONGTEXT` columns. The marketing layer marks them with the column comment `json` and parses and writes them for you.
 - Tests that need a database skip themselves unless `PORTAL_TEST_DATABASE_URL` is set; see the end of `migration/DATABASE-SETUP.md`.
+
+## Overseas Education Journey (`oj_*` tables)
+
+Migration `20261228000001_overseas_journey.sql` adds the journey tables: `oj_templates` (immutable workflow versions), `oj_cases` (one per student), `oj_applications`
+(unique per university + programme + intake), `oj_tasks` and `oj_task_deps`, `oj_events` (append-only audit trail), `oj_documents` (versioned) with `oj_doc_access`,
+`oj_evidence`, `oj_comm`, `oj_handovers`, `oj_reminders`, `oj_notifications` (unique per person and dedupe key), `oj_notif_prefs`, `oj_settings` and `oj_exceptions`.
+Case-owned rows cascade when the account is deleted. Design, formulas, deployment (including the `/api/cron/journey` schedule) and limits: `lib/journey/README.md`.

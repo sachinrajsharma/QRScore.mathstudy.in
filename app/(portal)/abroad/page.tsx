@@ -42,6 +42,7 @@ export default async function AbroadDashboard() {
       {!isVerified(me) ? <><Alert kind="info">Confirm your email to save your profile, upload documents and start applications.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
 
       <PackagesBanner href="/abroad/packages" />
+      <p className="mb-5 rounded-xl border border-orange/40 bg-orange-light px-4 py-3 text-[14px] text-ink"><b>New: your full journey tracker.</b> Twelve stages with a personalised checklist, due dates, reminders and your consultant&apos;s reviews. <Link className="underline font-semibold" href="/abroad/journey">Open my journey tracker</Link></p>
 
       <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your stage">
         {keys.map((k, i) => (

@@ -279,3 +279,12 @@ export async function packageLevel(userId: number): Promise<number> {
   }
   return best;
 }
+
+/** What the student may see of the history: no staff-only notes, reminders or handover reasons. */
+export async function timeline(caseId: number, limit = 12): Promise<Array<R & { actor: string | null }>> {
+  return all(`SELECT e.*, u.name AS actor FROM oj_events e LEFT JOIN users u ON u.id = e.actor_id WHERE e.case_id = $1 AND e.kind IN ('status','doc.uploaded','doc.verified','doc.rejected','application.added','application.status','exception.applied','case.created','legacy.imported') ORDER BY e.id DESC LIMIT ${Math.trunc(limit)}`, [caseId]);
+}
+
+export async function consultantOf(consultantId: number | null): Promise<{ id: number; name: string; email: string } | null> {
+  return consultantId ? one<{ id: number; name: string; email: string }>("SELECT id, name, email FROM users WHERE id = $1", [consultantId]) : null;
+}

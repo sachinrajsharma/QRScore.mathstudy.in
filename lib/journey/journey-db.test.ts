@@ -102,7 +102,7 @@ describe.skipIf(!DB)("overseas journey on a real database", () => {
     expect((await WS.caseload(C1())).map((r) => r.caseId)).toEqual([caseId]);
     expect((await WS.caseload(C2())).map((r) => r.caseId)).toEqual([case2]);
     expect((await WS.caseload(S())).length).toBe(0);
-    expect((await WS.caseload(A())).map((r) => r.caseId).sort()).toEqual([caseId, case2].sort());
+    expect((await WS.caseload(A())).map((r) => r.caseId)).toEqual(expect.arrayContaining([caseId, case2])); // admins see every case (plus any other cases in this database)
     expect((await WS.handovers(caseId))[0]).toMatchObject({ to_consultant: c1, reason: "initial assignment" });
   });
 
@@ -483,13 +483,36 @@ describe.skipIf(!DB)("overseas journey on a real database", () => {
   it("analytics come from real rows and withhold small-group rates", async () => {
     const a = await AN.compute();
     expect(a.cases.total).toBeGreaterThanOrEqual(2);
-    expect(a.enough).toBe(false);
+    expect(a.enough).toBe(a.cases.total >= AN.MIN_COHORT);
     expect(a.funnel[0].count).toBe(a.cases.total);
-    expect(a.funnel.slice(1).every((f) => f.ofPrev === null)).toBe(true); // < 5 cases: no rates
+    if (a.cases.total < AN.MIN_COHORT) expect(a.funnel.slice(1).every((f) => f.ofPrev === null)).toBe(true); // fewer than 5 cases: no rates
     expect(a.stages.length).toBeGreaterThan(5);
-    expect(a.stages.every((s) => s.completionPct === null)).toBe(true);
+    for (const s of a.stages) expect(s.completionPct === null).toBe(s.cases < AN.MIN_COHORT);
     expect(a.delay.total).toBe(a.delay.student + a.delay.consultant + a.delay.university);
     expect(a.workload.find((w) => w.consultantId === c1)!.cases).toBe(1);
+  });
+
+
+  it("the student can export their journey (no staff notes) and erase it with its files", async () => {
+    const sid4 = await mkUser(B.db, "student", "jstu4");
+    const c4 = await ST.createCase(sid4, input, { id: sid4, role: "student" });
+    await WS.assign(c4, c1, A(), "initial assignment");
+    expect(await WS.logComm(c4, C1(), { channel: "note", direction: "internal", subject: "Private", body: "Student seems unsure about the budget" })).toBeNull();
+    const d = (await DC.upload(c4, { id: sid4, role: "student" }, { docKey: "cv" }, file("mine.pdf"))) as number;
+    expect(typeof d).toBe("number");
+    const { exportJourney, eraseJourney } = await import("./privacy");
+    const out = JSON.stringify(await exportJourney(sid4));
+    expect(out).toContain("mine.pdf");
+    expect(out).not.toContain("unsure about the budget"); // staff-only notes are not part of the student's copy
+    expect(out).not.toContain("initial assignment");
+    const stored = (await B.db.val<string>("SELECT stored_name FROM oj_documents WHERE id = $1", [d]))!;
+    const storage = await import("../market/storage");
+    expect(await storage.get("vault", stored)).not.toBeNull();
+    expect(await eraseJourney(sid4)).toBe(1);
+    expect(await storage.get("vault", stored)).toBeNull();
+    expect(Number(await B.db.val("SELECT COUNT(*) FROM oj_cases WHERE user_id = $1", [sid4]))).toBe(0);
+    for (const t of ["oj_tasks", "oj_documents", "oj_events", "oj_comm"]) expect(Number(await B.db.val("SELECT COUNT(*) FROM " + t + " WHERE case_id = $1", [c4])), t).toBe(0);
+    await B.db.run("DELETE FROM users WHERE id = $1", [sid4]);
   });
 
   it("CSV export neutralises spreadsheet formulas and carries no document content", () => {

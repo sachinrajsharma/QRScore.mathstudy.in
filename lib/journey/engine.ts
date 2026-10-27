@@ -315,6 +315,6 @@ export function intakeRisk(o: { intake: Date | null; start: Date; now: Date; pct
     else if (left <= 240 && o.pct + 10 < expected) { if (level === "none") level = "watch"; reasons.push(`${o.pct}% done against about ${expected}% expected for ${left} days to intake`); }
   }
   if (o.overdueStudent >= 3) { if (level === "none") level = "watch"; reasons.push(`${o.overdueStudent} tasks overdue on the student's side`); }
-  else if (o.overdueAll >= 3 && level === "none") { level = "watch"; reasons.push(`${o.overdueAll} tasks overdue`); }
+  else if (o.overdueAll >= 3 && level === "none") { level = "watch"; reasons.push(`${o.overdueAll} tasks are past their due date (${o.overdueStudent} on the student's side)`); }
   return { level, reasons };
 }

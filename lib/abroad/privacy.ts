@@ -5,6 +5,7 @@ import * as mock from "./mock-interview";
 import * as S from "./store";
 import * as vault from "./vault";
 import * as visa from "./visa";
+import { eraseJourney, exportJourney } from "../journey/privacy";
 
 /** Study-abroad data export and erasure for the student (port of AbroadStore::export / erase). */
 const pick = <T extends Record<string, unknown>>(o: T, keys: string[]): Record<string, unknown> => Object.fromEntries(keys.filter((k) => k in o).map((k) => [k, o[k]]));
@@ -25,6 +26,7 @@ export async function exportData(uid: number): Promise<Record<string, unknown>> 
     status_history: await S.historyFor(uid, 200),
     funds: (await funds.sources(uid)).map((f) => pick(f as unknown as Record<string, unknown>, ["kind", "label", "amount_inr", "created_at"])),
     visa_cases: (await visa.forUser(uid)).map((v) => pick(v as unknown as Record<string, unknown>, ["uni_name", "stage", "appointment_at", "biometrics_at", "centre", "notes"])),
+    journey: await exportJourney(uid),
     mock_interviews: sessionOut,
     loans: (await loans.forUser(uid)).map((l) => pick(l as unknown as Record<string, unknown>, ["lender", "loan_type", "amount_inr", "rate_pct", "tenure_years", "moratorium_months", "status", "sanctioned_inr"])),
   };
@@ -33,6 +35,7 @@ export async function exportData(uid: number): Promise<Record<string, unknown>> 
 /** Erase all study-abroad data (files and rows) for a student. The audit trail records the erasure only. */
 export async function erase(uid: number): Promise<void> {
   await vault.deleteAllFor(uid);
+  await eraseJourney(uid);
   for (const t of ["sa_applications", "sa_shortlist", "sa_status_history", "sa_mock_sessions", "sa_funds", "sa_loans", "sa_profiles"]) await run(`DELETE FROM ${t} WHERE user_id = $1`, [uid]);
   await run("DELETE FROM sa_notes WHERE student_id = $1", [uid]);
   await S.audit(uid, uid, "data.erase");

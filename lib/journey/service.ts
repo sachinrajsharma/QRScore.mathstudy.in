@@ -45,12 +45,13 @@ export function buildView(loaded: Loaded, level: number, now: Date): CaseView {
   const pr = progress(tv.map((v) => ({ stage: v.task.stage, status: v.task.status, obsolete: false, locked: v.ent.locked })));
   const overdue = open.filter((v) => v.overdue);
   const counts = {
-    pending: open.filter((v) => !["completed", "not_applicable"].includes(v.task.status)).length,
+    // "To do" is what can be worked on now; steps still waiting behind earlier ones are counted as blocked only when they are close or were blocked on purpose.
+    pending: open.filter((v) => !["completed", "not_applicable"].includes(v.task.status) && v.effective !== "blocked").length,
     awaitingReview: open.filter((v) => v.task.status === "submitted_for_review").length,
     overdueStudent: overdue.filter((v) => v.party === "student").length,
     overdueAll: overdue.length,
     waitingUniversity: open.filter((v) => v.task.status === "waiting_on_university" || (v.task.owner === "university" && v.task.status !== "completed" && v.task.status !== "not_applicable")).length,
-    blocked: open.filter((v) => v.effective === "blocked").length,
+    blocked: open.filter((v) => v.effective === "blocked" && (v.block.kind === "manual" || v.overdue || (v.task.dueAt !== null && parseSql(v.task.dueAt).getTime() < now.getTime() + 30 * 86_400_000))).length,
     completed: open.filter((v) => v.task.status === "completed").length,
     criticalOverdue: overdue.filter((v) => v.task.priority === "critical").length,
   };
