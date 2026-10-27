@@ -38,10 +38,10 @@ function Cover({ no, Icon, state }: { no: number; Icon: LucideIcon; state: "done
   );
 }
 
-export function Roadmap({ stages, href = "/abroad/journey", compact = false }: { stages: StageProgress[]; href?: string; compact?: boolean }) {
+export function Roadmap({ stages, href = "/abroad/journey", compact = false, preview = false }: { stages: StageProgress[]; href?: string; compact?: boolean; preview?: boolean }) {
   const by = new Map(stages.map((s) => [s.stage, s]));
   const nodes = STAGES.filter((s) => by.has(s.no));
-  const firstOpen = nodes.find((s) => !s.track && (by.get(s.no)?.done ?? 0) < (by.get(s.no)?.total ?? 0))?.no;
+  const firstOpen = preview ? undefined : nodes.find((s) => !s.track && (by.get(s.no)?.done ?? 0) < (by.get(s.no)?.total ?? 0))?.no;
   const state = (no: number): "done" | "current" | "todo" => {
     const p = by.get(no) as StageProgress;
     return p.total > 0 && p.done === p.total ? "done" : no === firstOpen ? "current" : "todo";
@@ -51,8 +51,8 @@ export function Roadmap({ stages, href = "/abroad/journey", compact = false }: {
   return (
     <section aria-labelledby="road-h" className="mb-6 rounded-2xl border border-black/[0.08] bg-white shadow-card p-4 sm:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="road-h" className="text-[18px] font-semibold text-ink">Your road to studying abroad</h2>
-        <p className="text-[13px] text-ink-3">{doneCount} of {core.length} stages complete{firstOpen ? <> · you are on <b className="text-ink">stage {firstOpen}: {SHORT[firstOpen]}</b></> : null}</p>
+        <h2 id="road-h" className="text-[18px] font-semibold text-ink">{preview ? "The road to studying abroad: 12 stages" : "Your road to studying abroad"}</h2>
+        <p className="text-[13px] text-ink-3">{preview ? "Set up your journey to see exactly where you are" : <>{doneCount} of {core.length} stages complete{firstOpen ? <> · you are on <b className="text-ink">stage {firstOpen}: {SHORT[firstOpen]}</b></> : null}</>}</p>
       </div>
       <ol className={`mt-4 grid grid-cols-2 gap-3 sm:gap-4 ${compact ? "md:grid-cols-4 xl:grid-cols-6" : "md:grid-cols-3 xl:grid-cols-4"}`}>
         {nodes.map((s) => {
@@ -61,12 +61,12 @@ export function Roadmap({ stages, href = "/abroad/journey", compact = false }: {
           const Icon = ICON[s.no] ?? UserRound;
           return (
             <li key={s.no} aria-current={st === "current" ? "step" : undefined}>
-              <Link href={`${href}#stage-${s.no}`} className={`group block rounded-2xl border p-2 transition hover:-translate-y-0.5 hover:shadow-card ${st === "current" ? "border-orange ring-2 ring-orange/30 bg-orange-light/40" : "border-black/[0.08] bg-white"}`}>
+              <Link href={preview ? href : `${href}#stage-${s.no}`} className={`group block rounded-2xl border p-2 transition hover:-translate-y-0.5 hover:shadow-card ${st === "current" ? "border-orange ring-2 ring-orange/30 bg-orange-light/40" : "border-black/[0.08] bg-white"}`}>
                 <Cover no={s.no} Icon={Icon} state={st} />
                 <span className="block px-1.5 pt-2 pb-1">
                   <span className="flex items-start justify-between gap-2"><span className="text-[14px] font-semibold text-ink leading-snug">{SHORT[s.no] ?? s.name}</span>
                     {st === "current" ? <span className="shrink-0 rounded-full bg-orange px-2 py-0.5 text-[11px] font-bold text-white">You are here</span> : null}</span>
-                  <span className="mt-0.5 block text-[12px] text-ink-3">{st === "done" ? "Complete" : `${p.done} of ${p.total} steps`}<span className="sr-only"> ({st === "done" ? "done" : st === "current" ? "current stage" : "not started yet"})</span></span>
+                  <span className="mt-0.5 block text-[12px] text-ink-3">{preview ? "Not started" : st === "done" ? "Complete" : `${p.done} of ${p.total} steps`}<span className="sr-only"> ({st === "done" ? "done" : st === "current" ? "current stage" : "not started yet"})</span></span>
                   {compact ? null : <span className="mt-1.5 block h-1.5 rounded-full bg-cream-3 overflow-hidden"><span className={`block h-full rounded-full ${st === "done" ? "bg-emerald-600" : "bg-orange"}`} style={{ width: `${p.pct}%` }} /></span>}
                 </span>
               </Link>

@@ -13,6 +13,7 @@ import { caseOfUser } from "@/lib/journey/store";
 import { Bar } from "@/components/journey/parts";
 import { ABROAD_PACKAGES } from "@/lib/abroad/packages";
 import { Roadmap } from "@/components/journey/Roadmap";
+import { STAGES as JOURNEY_STAGES } from "@/lib/journey/default-template";
 import PackagesBanner from "@/components/abroad/PackagesBanner";
 import { Card, PortalPage } from "@/components/portal/shell";
 import { Alert } from "@/components/portal/ui";
@@ -23,6 +24,7 @@ export const dynamic = "force-dynamic";
 
 const STATUS: Record<string, string> = { draft: "Draft", in_review: "In review", applied: "Applied", offer: "Offer", declined: "Declined", accepted: "Accepted" };
 const day = (s: string) => new Date(s.replace(" ", "T") + "Z").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const PREVIEW = JOURNEY_STAGES.map((s) => ({ stage: s.no, total: 0, done: 0, pct: 0 }));
 const btn = "min-h-[44px] px-4 rounded-lg text-[14px] font-semibold";
 
 export default async function AbroadDashboard() {
@@ -40,8 +42,6 @@ export default async function AbroadDashboard() {
   const history = await S.historyFor(uid, 8);
   const jc = await caseOfUser(uid);
   const jv = jc ? await viewCase(jc.id) : null;
-  const keys = Object.keys(A.STAGES);
-  const at = keys.indexOf(stage);
 
   return (
     <PortalPage user={me} active="abroad" title="Overseas education" subtitle="Your journey, applications, documents and packages in one place, with a counselor reviewing every step." wide="full">
@@ -65,17 +65,7 @@ export default async function AbroadDashboard() {
           <Link href="/abroad/journey" className={`${btn} inline-flex items-center bg-orange hover:bg-orange-dark text-white`}>Set up my journey</Link></section>
       )}
 
-      {jv ? (
-        <Roadmap stages={jv.progress.stages} compact />
-      ) : (
-      <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your stage">
-        {keys.map((k, i) => (
-          <li key={k} aria-current={i === at ? "step" : undefined} className={`rounded-xl border px-3 py-2.5 ${i === at ? "bg-orange-light border-orange/40" : i < at ? "bg-emerald-50 border-emerald-200" : "bg-white border-black/[0.08]"}`}>
-            <b className="block text-[14px] text-ink">{i < at ? "✓ " : ""}{A.STAGES[k][0]}</b><span className="text-[12px] text-ink-3">{A.STAGES[k][1]}</span>
-          </li>
-        ))}
-      </ol>
-      )}
+      {jv ? <Roadmap stages={jv.progress.stages} compact /> : <Roadmap stages={PREVIEW} preview compact />}
 
       {!complete ? (
         <Card title="Start with your profile">
