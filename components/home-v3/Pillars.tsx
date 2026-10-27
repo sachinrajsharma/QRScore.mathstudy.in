@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, BookOpen, Check, Globe2, Layers, Route, Sparkles, Target, type LucideIcon } from "lucide-react";
 import { VERTICALS as ALL, type Vertical } from "./data";
 import { COUNTRIES, INTERNSHIPS } from "@/components/home-options/data";
+import { staticCourses } from "@/lib/market/static-catalogue";
+import { EXAM_PREP } from "@/lib/pay/course-fees";
+import { STAGES } from "@/lib/journey/default-template";
 
 const ORDER = ["resume", "internships", "courses", "math", "writing", "abroad", "classes", "ebooks"];
 const VERTICALS = ORDER.map((k) => ALL.find((v) => v.key === k)!);
@@ -107,7 +110,15 @@ function Visual({ v }: { v: Vertical }) {
   }
 }
 
-const STATS: Array<[string, string]> = [["8", "tools in one workspace"], ["7", "study destinations"], ["15", "levels of math speed"], ["Free", "to start"]];
+/** Counted from what the site holds, so the strip stays true as products are added. */
+const STATS: Array<[LucideIcon, string, string]> = [
+  [Layers, String(VERTICALS.length), "products in one workspace"],
+  [BookOpen, String(staticCourses().length), "courses to learn from"],
+  [Target, String(EXAM_PREP.length), "exam-prep programmes"],
+  [Route, String(STAGES.filter((x) => !x.track).length), "stage overseas journey"],
+  [Globe2, String(COUNTRIES.length), "study destinations"],
+  [Sparkles, "Free", "to start, no card needed"],
+];
 
 export default function Pillars() {
   return (
@@ -119,8 +130,14 @@ export default function Pillars() {
           <h2 data-rv id="hx-pillars" className="text-[clamp(2.1rem,4.6vw,3.6rem)] font-semibold leading-[1.06] tracking-tight text-white">Everything You Need to <span className="hx-grad-text">Move Forward.</span></h2>
           <p data-rv className="mt-4 text-[1.08rem] leading-relaxed text-white/70">One connected ecosystem for learning, career growth, and global opportunities.</p>
         </div>
-        <dl data-rv className="mx-auto mb-12 grid max-w-[900px] grid-cols-2 gap-3 md:grid-cols-4">
-          {STATS.map(([n, l]) => <div key={l} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center"><dt className="sr-only">{l}</dt><dd className="text-[1.5rem] font-semibold text-white">{n}<span className="mt-0.5 block text-[0.72rem] font-normal text-white/55">{l}</span></dd></div>)}
+        <dl data-rv className="mx-auto mb-12 grid max-w-[1080px] grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {STATS.map(([Icon, n, l]) => (
+            <div key={l} className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.02] px-3 py-4 text-center transition hover:-translate-y-0.5 hover:border-white/25">
+              <Icon className="mx-auto mb-2 h-[18px] w-[18px] text-[#8cf0c9]" aria-hidden />
+              <dt className="sr-only">{l}</dt>
+              <dd className="text-[1.65rem] font-semibold leading-none text-white">{n}<span className="mt-1.5 block text-[0.72rem] font-normal leading-tight text-white/60">{l}</span></dd>
+            </div>
+          ))}
         </dl>
         <ul className="grid gap-4 md:grid-cols-6">
           {VERTICALS.map((v, i) => {
