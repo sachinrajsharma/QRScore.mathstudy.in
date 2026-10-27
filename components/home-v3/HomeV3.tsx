@@ -13,7 +13,7 @@ import Hero from "./Hero";
 import Pillars from "./Pillars";
 import Discovery from "./Discovery";
 import ResumeShowcase from "./ResumeShowcase";
-import { Abroad, OverseasPackages, Opportunities, Learn, Library, HowItWorks3, Trust, FinalCTA3 } from "./Showcases";
+import { Abroad, Opportunities, Learn, Library, HowItWorks3, Trust, FinalCTA3 } from "./Showcases";
 
 /**
  * Homepage v3 composition:
@@ -34,7 +34,6 @@ export default function HomeV3() {
             <Discovery counts={{ courses: staticCourses().length, countries: COUNTRIES.length, templates: templateCount }} />
             <ResumeShowcase templateCount={templateCount} />
             <Abroad />
-            <OverseasPackages />
             <Opportunities />
             <Learn />
             <Library />
