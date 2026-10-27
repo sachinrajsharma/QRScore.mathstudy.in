@@ -42,7 +42,7 @@ export default async function StudentFile({ params }: { params: Promise<{ id: st
   const fc = primary ? await CAT.country(primary.country_key) : null;
   const target = primary && fc ? FD.target(primary, fc) : null;
   const cov = target ? FD.coverage(pool, target.min_inr) : null;
-  const back = me.role === "admin" ? "/console/abroad" : "/counselor";
+  const back = me.role === "admin" ? "/console/abroad" : "/counselor?legacy=1";
   const dl = (k: string, v: string) => <><dt className="text-ink-4">{k}</dt><dd className="text-ink">{v}</dd></>;
 
   return (

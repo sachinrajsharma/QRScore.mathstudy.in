@@ -23,13 +23,13 @@ export async function claimStudentAction(fd: FormData): Promise<void> {
   const me = await staff("/counselor");
   const err = me.role === "counselor" ? await CN.claim(me.id, n(fd, "student_id")) : "Only counselors take students; admins assign them.";
   await flash(err ? "err" : "ok", err ?? "Student added to your caseload.");
-  redirect("/counselor");
+  redirect("/counselor?legacy=1");
 }
 
 export async function studentAction(fd: FormData): Promise<void> {
   const sid = n(fd, "student_id");
   const me = await staff(`/counselor/student/${sid}`);
-  if (!sid || !(await CN.canAccess(me, sid))) redirect("/counselor");
+  if (!sid || !(await CN.canAccess(me, sid))) redirect("/counselor?legacy=1");
   const act = s(fd, "act");
   const id = n(fd, "id");
   let err: string | null = null;
@@ -59,7 +59,7 @@ export async function studentAction(fd: FormData): Promise<void> {
 export async function mockFeedbackAction(fd: FormData): Promise<void> {
   const sess = await MI.session(n(fd, "id"));
   const me = await staff(`/counselor/mock/${sess?.id ?? 0}`);
-  if (!sess || sess.finished_at === null || !(await CN.canAccess(me, Number(sess.user_id)))) redirect("/counselor");
+  if (!sess || sess.finished_at === null || !(await CN.canAccess(me, Number(sess.user_id)))) redirect("/counselor?legacy=1");
   const err = await MI.addFeedback(sess.id, me.id, String(fd.get("body") ?? ""));
   await flash(err ? "err" : "ok", err ?? "Feedback sent. The student was notified.");
   redirect(`/counselor/mock/${sess.id}`);

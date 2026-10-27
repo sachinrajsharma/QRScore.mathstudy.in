@@ -14,7 +14,7 @@ export default async function JourneyNotifications() {
   const me = await requireUser("student");
   const [items, prefs] = await Promise.all([NT.list(me.id, 40), NT.prefs(me.id)]);
   return (
-    <PortalPage user={me} active="journey" title="Notifications" subtitle={<Link className="underline" href="/abroad/journey">← Back to my journey</Link>} wide>
+    <PortalPage user={me} active="abroad" title="Notifications" subtitle={<Link className="underline" href="/abroad/journey">← Back to your checklist</Link>} wide>
       <Flash />
       <Card title="Your reminders and updates">
         {!items.length ? <p className="text-[15px] text-ink-3">Nothing yet. Reminders appear here before deadlines, and we tell you when your consultant reviews something.</p> : (

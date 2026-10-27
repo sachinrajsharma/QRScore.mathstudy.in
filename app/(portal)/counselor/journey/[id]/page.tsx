@@ -51,7 +51,7 @@ export default async function CaseDetail({ params }: { params: Promise<{ id: str
   const canAssign = me.role === "admin" || c.consultantId === me.id;
 
   return (
-    <ConsolePage me={me} tab="journey-ws" plain title={student.name} subtitle={`${c.destination.toUpperCase()} · ${c.degree} · ${c.intake} · journey ${c.status}`}>
+    <ConsolePage me={me} tab="students" plain title={student.name} subtitle={`${c.destination.toUpperCase()} · ${c.degree} · ${c.intake} · journey ${c.status}`}>
       <JourneyFlash />
       <p className="mb-4"><Link className="underline text-[14px]" href="/counselor/journey">← Journey workspace</Link></p>
       <section className={box} aria-labelledby="sm-h">

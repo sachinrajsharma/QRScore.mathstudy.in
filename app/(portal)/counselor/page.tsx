@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireMfaIfStaff, requireUser } from "@/lib/portal/guard";
 import * as CAT from "@/lib/abroad/catalogue";
 import * as CN from "@/lib/abroad/counsel";

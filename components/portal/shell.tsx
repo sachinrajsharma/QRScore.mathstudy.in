@@ -30,8 +30,7 @@ export function groupsFor(role: string): NavGroup[] {
         ] },
         { title: "Global", items: [
           { key: "abroad-packages", href: "/abroad/packages", label: "Overseas education", icon: "abroad" },
-          { key: "journey", href: "/abroad/journey", label: "Journey tracker", icon: "abroad" },
-          { key: "abroad", href: "/abroad", label: "My study-abroad journey", icon: "abroad" },
+          { key: "abroad", href: "/abroad", label: "Study abroad", icon: "abroad" },
           { key: "share", href: "/passport/share", label: "Share my passport", icon: "share" },
         ] },
       ];
@@ -48,13 +47,11 @@ export function groupsFor(role: string): NavGroup[] {
       return [{ title: "Overview", items: [ACCOUNT, BILLING, SUPPORT] }, { title: "Staff", items: [
         { key: "crm", href: "/crm", label: "Overseas CRM", icon: "crm" },
         { key: "console", href: "/console", label: "Admin console", icon: "console" },
-        { key: "journey-ws", href: "/counselor/journey", label: "Journey workspace", icon: "caseload" },
       ] }];
     case "counselor":
       return [{ title: "Overview", items: [ACCOUNT, BILLING, SUPPORT] }, { title: "Staff", items: [
         { key: "crm", href: "/crm", label: "Overseas CRM", icon: "crm" },
-        { key: "caseload", href: "/counselor", label: "My caseload", icon: "caseload" },
-        { key: "journey-ws", href: "/counselor/journey", label: "Journey workspace", icon: "caseload" },
+        { key: "students", href: "/counselor/journey", label: "Students", icon: "caseload" },
       ] }];
     default:
       return [{ title: "Overview", items: [ACCOUNT, BILLING, SUPPORT] }];

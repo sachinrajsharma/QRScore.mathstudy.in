@@ -25,8 +25,9 @@ export default async function Workspace({ searchParams }: { searchParams: Promis
   const qs = new URLSearchParams(Object.entries(q).filter(([, v]) => v) as [string, string][]).toString();
   const sum = (k: keyof WS.CaseRowList) => rows.reduce((a, r) => a + Number(r[k] ?? 0), 0);
   return (
-    <ConsolePage me={me} tab="journey-ws" plain title="Journey workspace" subtitle={me.role === "admin" ? "All cases, because you are an administrator." : "Your assigned students, what is waiting on you, and who is at risk."}>
+    <ConsolePage me={me} tab="students" plain title="Journey workspace" subtitle={me.role === "admin" ? "All cases, because you are an administrator." : "Your assigned students, what is waiting on you, and who is at risk."}>
       <JourneyFlash />
+      <p className="mb-4 text-[13px] text-ink-3">Students not yet on the journey tracker are still in the <Link className="underline" href="/counselor?legacy=1">earlier caseload</Link>.</p>
       <Stats items={[["Cases shown", rows.length], ["Awaiting your review", queue.length], ["Overdue tasks", sum("overdue")], ["At-risk cases", risks.length]]} />
 
       <section className={box} aria-labelledby="rq-h"><h2 id="rq-h" className="text-[18px] font-semibold text-ink mb-2">Review queue <span className="text-ink-4 font-normal">(oldest first)</span></h2>

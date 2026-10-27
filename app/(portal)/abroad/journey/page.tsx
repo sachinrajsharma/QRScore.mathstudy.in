@@ -44,7 +44,7 @@ export default async function JourneyDashboard() {
   const cs = await A.countries();
 
   return (
-    <PortalPage user={me} active="journey" title="My overseas education journey" subtitle={`${cs[c.destination]?.name ?? c.destination} · ${c.degree} · ${c.intake}`} wide="full">
+    <PortalPage user={me} active="abroad" title="Your 12-stage checklist" subtitle={<><Link href="/abroad" className="underline">← Back to Study abroad</Link> · {cs[c.destination]?.name ?? c.destination} · {c.degree} · {c.intake}</>} wide="full">
       <Flash />
       {!isVerified(me) ? <><Alert kind="info">Confirm your email to save documents and complete tasks.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
       {c.status === "withdrawn" ? <Alert kind="info">This journey was withdrawn. Everything you recorded is kept. Contact your consultant if you want to start again.</Alert> : null}
@@ -169,7 +169,7 @@ async function Setup({ me }: { me: Awaited<ReturnType<typeof requireUser>> }) {
   const opts = intakes().filter((x) => x !== "Not sure yet");
   const row = "flex items-start gap-2.5 min-h-[44px] text-[15px] text-ink-2";
   return (
-    <PortalPage user={me} active="journey" title="Start your overseas education journey" subtitle="Answer a few questions and we build the exact checklist you need: only the steps that apply to you." wide>
+    <PortalPage user={me} active="abroad" title="Start your overseas education journey" subtitle="Answer a few questions and we build the exact checklist you need: only the steps that apply to you." wide>
       <Flash />
       {!isVerified(me) ? <><Alert kind="info">Confirm your email first, then start your journey.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
       {pre.hasLegacy ? <Alert kind="info">We found your earlier study-abroad profile. We pre-filled what we could, and will bring your applications and documents across. Nothing is marked done unless it can be proved.</Alert> : null}

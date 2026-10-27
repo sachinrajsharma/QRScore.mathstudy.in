@@ -27,7 +27,7 @@ export default async function JourneyDocuments() {
   for (const d of docs) { const l = await DC.link(d.id, who); if (l) links.set(d.id, l); }
   const apps = loaded?.apps ?? [];
   return (
-    <PortalPage user={me} active="journey" title="My documents" subtitle={<Link className="underline" href="/abroad/journey">← Back to my journey</Link>} wide>
+    <PortalPage user={me} active="abroad" title="My documents" subtitle={<Link className="underline" href="/abroad/journey">← Back to your checklist</Link>} wide>
       <Flash />
       <Card title="Upload a document">
         <form action={uploadAction} encType="multipart/form-data" className="grid sm:grid-cols-2 gap-4 items-end">

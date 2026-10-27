@@ -21,6 +21,7 @@ export default async function JourneyAdmin() {
   return (
     <ConsolePage me={me} tab="journey" title="Overseas journey management" subtitle="Workload, bottlenecks and outcomes from real cases only, plus the workflow template and reminder rules.">
       <JourneyFlash />
+      <p className="mb-4"><Link className="underline text-[14px]" href="/counselor/journey">Open the Students workspace (all cases) →</Link></p>
       <Stats items={[["Active journeys", a.cases.active], ["Deferred / withdrawn", `${a.cases.deferred} / ${a.cases.withdrawn}`], ["At high intake risk", a.atRisk.high, `${a.atRisk.watch} on watch`], ["Waiting for a consultant", unassigned.length]]} />
       {!a.enough ? <p role="note" className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 text-[14px] text-amber-900">Only {a.cases.total} journey{a.cases.total === 1 ? "" : "s"} so far. Rates and averages stay hidden until a group has at least {AN.MIN_COHORT} journeys, so a single student is never exposed and small numbers are not over-read. Counts are shown as they are.</p> : null}
 

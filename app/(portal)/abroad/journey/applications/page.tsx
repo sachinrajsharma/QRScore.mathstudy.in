@@ -24,7 +24,7 @@ export default async function JourneyApplications() {
   const apps = l?.apps ?? [];
   const live = apps.filter((a) => !["rejected", "withdrawn", "declined"].includes(a.status));
   return (
-    <PortalPage user={me} active="journey" title="My applications" subtitle={<Link className="underline" href="/abroad/journey">← Back to my journey</Link>} wide>
+    <PortalPage user={me} active="abroad" title="My applications" subtitle={<Link className="underline" href="/abroad/journey">← Back to your checklist</Link>} wide>
       <Flash />
       <p className="mb-4 text-[14px] text-ink-3">One application for each university, programme and intake. Each has its own steps and documents, so a rejection or a change in one never affects the others.</p>
       <div className="grid lg:grid-cols-2 gap-4 mb-6">

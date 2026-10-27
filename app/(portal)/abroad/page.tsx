@@ -43,7 +43,7 @@ export default async function AbroadDashboard() {
   const at = keys.indexOf(stage);
 
   return (
-    <PortalPage user={me} active="abroad" title="My study-abroad journey" subtitle="Your profile, applications and documents in one place, with a counselor reviewing every step." wide="full">
+    <PortalPage user={me} active="abroad" title="Study abroad" subtitle="Your profile, applications and documents in one place, with a counselor reviewing every step." wide="full">
       <Flash />
       {!isVerified(me) ? <><Alert kind="info">Confirm your email to save your profile, upload documents and start applications.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
 
@@ -51,7 +51,7 @@ export default async function AbroadDashboard() {
       {jv ? (
         <section aria-labelledby="jr-h" className="mb-6 rounded-2xl border border-black/[0.08] bg-white shadow-card p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2"><h2 id="jr-h" className="text-[18px] font-semibold text-ink">Your journey: {jv.progress.pct}% complete</h2>
-            <Link href="/abroad/journey" className={`${btn} inline-flex items-center bg-orange hover:bg-orange-dark text-white`}>Open full journey</Link></div>
+            <Link href="/abroad/journey" className={`${btn} inline-flex items-center bg-orange hover:bg-orange-dark text-white`}>Open 12-stage checklist</Link></div>
           <p className="text-[13px] text-ink-3 mb-2">{jv.progress.done} of {jv.progress.total} steps done{jv.counts.overdueStudent ? ` · ${jv.counts.overdueStudent} overdue on your side` : ""}{jv.counts.awaitingReview ? ` · ${jv.counts.awaitingReview} with your consultant` : ""}</p>
           <Bar pct={jv.progress.pct} label="Journey progress" />
           {jv.next.length ? <><h3 className="mt-4 text-[14px] font-semibold text-ink">Do these next</h3>

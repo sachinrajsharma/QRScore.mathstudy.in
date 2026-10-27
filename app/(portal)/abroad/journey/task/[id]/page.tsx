@@ -41,7 +41,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
   const dependents = loaded.deps.filter((d) => d.dependsOn === id).map((d) => loaded.byId.get(d.taskId)).filter((x) => x && !x.obsolete);
 
   return (
-    <PortalPage user={me} active="journey" title={task.title} subtitle={<Link href={`/abroad/journey#t${id}`} className="underline">← Back to my journey</Link>} wide>
+    <PortalPage user={me} active="abroad" title={task.title} subtitle={<Link href={`/abroad/journey#t${id}`} className="underline">← Back to your checklist</Link>} wide>
       <Flash />
       <section aria-labelledby="sum" className="bg-white rounded-2xl border border-black/[0.08] shadow-card p-5 sm:p-6 mb-5">
         <h2 id="sum" className="sr-only">Summary</h2>
