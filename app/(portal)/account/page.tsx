@@ -3,6 +3,7 @@ import Link from "next/link";
 import { isVerified, mfaRequiredFor } from "@/lib/portal/auth";
 import { requireUser } from "@/lib/portal/guard";
 import PlanCard from "@/components/pay/PlanCard";
+import MyProducts from "@/components/pay/MyProducts";
 import UpgradePlans from "@/components/pay/UpgradePlans";
 import ServicesCard from "@/components/pay/ServicesCard";
 import { planInfo } from "@/lib/pay/plans";
@@ -33,6 +34,8 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
     <PortalPage user={me} active="account" title={`Hello, ${me.name.split(" ")[0]}`} subtitle={`${ROLE_LABEL[me.role]} account`}>
       {sp.welcome ? <Alert kind="success">Welcome to GrowQR. Your account is ready.</Alert> : null}
 
+      {me.role === "student" ? <MyProducts userId={me.id} /> : null}
+
       {me.role === "student" ? (
         <Card title="Your Skill Passport">
           <p className="text-[15px] text-ink-3 mb-4">Score your resume, see what to improve, and publish a QR-verifiable passport that employers can check.</p>
@@ -43,7 +46,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         </Card>
       ) : null}
 
-      {me.role === "student" ? <PlanCard userId={me.id} /> : null}
+      {me.role === "student" ? <div id="plan"><PlanCard userId={me.id} /></div> : null}
       {me.role === "student" ? <ServicesCard userId={me.id} msg={{ ok: sp.svc === "ok" ? sp.t : undefined, err: sp.svc === "err" ? sp.e : undefined }} /> : null}
       {me.role === "student" && !me.is_demo && (await planInfo(me.id).catch(() => null)) === null ? <UpgradePlans stacks={planStacks()} /> : null}
 

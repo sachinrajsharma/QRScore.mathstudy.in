@@ -9,7 +9,7 @@ export async function createDemoAction(): Promise<void> {
   const me = await adminGate("/console/demo");
   if (me.is_demo) redirect("/demo-readonly");
   const r = await createInvestorDemo();
-  await putSessionData({ console_flash: [r.ok ? "ok" : "err", r.ok ? "The investor demo student is ready. Details are below." : r.message], demo_steps: r.steps });
+  await putSessionData({ console_flash: [r.ok ? "ok" : "err", r.ok ? "The demo student is ready. Details are below." : r.message], demo_steps: r.steps });
   redirect("/console/demo");
 }
 

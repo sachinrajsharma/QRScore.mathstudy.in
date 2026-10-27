@@ -17,7 +17,7 @@ export default async function DemoConsole() {
   if (steps.length) await dropSessionData("demo_steps");
   const exists = await one<{ id: number }>("SELECT id FROM users WHERE email = $1 AND is_demo = 1", [DEMO_EMAIL]);
   return (
-    <ConsolePage me={me} tab="demo" title="Demo student" subtitle="A read-only student login with two purchases and a full overseas journey, for showing the product to investors and senior reviewers.">
+    <ConsolePage me={me} tab="demo" title="Demo student" subtitle="A read-only student login with two purchases and a full overseas journey, for showing the product to senior reviewers and partners.">
       <section className={box} aria-labelledby="demo-h">
         <h2 id="demo-h" className="mb-2 text-[18px] font-semibold text-ink">{exists ? "The demo student exists" : "Create the demo student"}</h2>
         <p className="mb-4 max-w-[46em] text-[14px] leading-relaxed text-ink-3">

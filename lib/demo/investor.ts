@@ -65,12 +65,12 @@ export async function createInvestorDemo(): Promise<DemoResult> {
     steps.push(await removeInvestorDemo());
 
     const hash = await hashPassword(DEMO_PASSWORD);
-    const student = Number(await val("INSERT INTO users (role, email, password_hash, name, email_verified_at, created_at, is_demo) VALUES ('student', $1, $2, 'Investor Demo (student)', NOW(), NOW(), 1) RETURNING id", [DEMO_EMAIL, hash]));
+    const student = Number(await val("INSERT INTO users (role, email, password_hash, name, email_verified_at, created_at, is_demo) VALUES ('student', $1, $2, 'Demo Student', NOW(), NOW(), 1) RETURNING id", [DEMO_EMAIL, hash]));
     const consultant = Number(await val("INSERT INTO users (role, email, password_hash, name, email_verified_at, created_at, is_demo) VALUES ('counselor', $1, $2, 'Rhea Kapoor (demo consultant)', NOW(), NOW(), 1) RETURNING id", [DEMO_CONSULTANT_EMAIL, await bcrypt.hash(newAccessToken(), 10)]));
     steps.push("Created the demo student and a demo consultant (nobody can sign in as the consultant).");
 
-    steps.push("Purchase 1: " + await demoOrder(student, DEMO_EMAIL, "Investor Demo", DEMO_PLAN_SKU, 12, 120));
-    steps.push("Purchase 2: " + await demoOrder(student, DEMO_EMAIL, "Investor Demo", DEMO_OVERSEAS_SKU, 9, null));
+    steps.push("Purchase 1: " + await demoOrder(student, DEMO_EMAIL, "Demo Student", DEMO_PLAN_SKU, 12, 120));
+    steps.push("Purchase 2: " + await demoOrder(student, DEMO_EMAIL, "Demo Student", DEMO_OVERSEAS_SKU, 9, null));
 
     await run("INSERT INTO sa_profiles (user_id, level, field, score_type, score_value, academic_index, english_test, english_score, budget_inr, countries, intake, goal, stage, consent_at, consent_version, created_at, updated_at) VALUES ($1,'PG','Data Science','percentage',76,76,'IELTS',7.0,2800000,'uk','Fall 2027','Study abroad','DOC_COLLECTION',NOW(),'2026-10',NOW(),NOW())", [student]);
     steps.push("Added a study-abroad profile (MSc Data Science, UK, Fall 2027).");
@@ -114,10 +114,10 @@ export async function createInvestorDemo(): Promise<DemoResult> {
     const bk = await key("s2.backlogs"); await SV.moveTask(bk.id, S, "in_progress");
     for (const [u, p, cat] of [["University of Leeds", "MSc Data Science", "target"], ["University of Edinburgh", "MSc Artificial Intelligence", "ambitious"], ["Coventry University", "MSc Data Science and Computational Intelligence", "safer"]] as const)
       await AP.addApplication(c, S, { uniName: u, programme: p, intake: "Fall 2027", category: cat });
-    await NT.notify({ userId: student, caseId: c, kind: "reminder", title: "Due in 3 days: Book your English test", body: "Book early so you can still retake it.", link: "/abroad/journey", dedupe: "investor-demo:1", email: false });
+    await NT.notify({ userId: student, caseId: c, kind: "reminder", title: "Due in 3 days: Book your English test", body: "Book early so you can still retake it.", link: "/abroad/journey", dedupe: "demo-student:1", email: false });
     steps.push("Built the 12-stage journey with progress, three university applications, a consultant and a reminder.");
 
-    return { ok: true, message: "The investor demo student is ready.", email: DEMO_EMAIL, password: DEMO_PASSWORD, steps };
+    return { ok: true, message: "The demo student is ready.", email: DEMO_EMAIL, password: DEMO_PASSWORD, steps };
   } catch (e) {
     return { ok: false, message: e instanceof Error ? e.message : "Something went wrong while creating the demo.", email: DEMO_EMAIL, password: DEMO_PASSWORD, steps };
   }
