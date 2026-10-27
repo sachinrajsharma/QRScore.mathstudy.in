@@ -9,8 +9,8 @@ import { hashToken, newAccessToken, newOrderId } from "../pay/ids";
  * the same edge guard that protects the demo administrator blocks every change and download from it (see lib/portal/demo.ts). Everything is dummy data:
  * the two "purchases" are labelled demo_ in the payment tables and no money moved. Run from Console > Demo student; safe to run again (it rebuilds).
  */
-export const DEMO_EMAIL = "investor.demo@growqr.demo";
-export const DEMO_PASSWORD = "GrowQR-Demo-2026";
+export const DEMO_EMAIL = "delhi@demo.com";
+export const DEMO_PASSWORD = "Delhi@2026";
 export const DEMO_CONSULTANT_EMAIL = "consultant.demo@growqr.demo";
 export const DEMO_PLAN_SKU = "plan-pro-monthly"; // Rs 599
 export const DEMO_OVERSEAS_SKU = "abroad-incubator"; // Overseas level 3, Academic & Admission Incubator
