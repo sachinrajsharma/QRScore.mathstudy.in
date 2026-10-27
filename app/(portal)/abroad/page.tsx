@@ -8,10 +8,10 @@ import * as V from "@/lib/abroad/vault";
 import { answerOfferAction, submitAction, visaTickAction } from "@/app/abroad/actions";
 import { eraseAction } from "@/app/abroad/more-actions";
 import { Flash } from "@/components/abroad/parts";
-import { legacyCards } from "@/lib/journey/legacy";
 import { viewCase } from "@/lib/journey/service";
 import { caseOfUser } from "@/lib/journey/store";
 import { Bar } from "@/components/journey/parts";
+import { Roadmap } from "@/components/journey/Roadmap";
 import PackagesBanner from "@/components/abroad/PackagesBanner";
 import { Card, PortalPage } from "@/components/portal/shell";
 import { Alert } from "@/components/portal/ui";
@@ -64,13 +64,7 @@ export default async function AbroadDashboard() {
       )}
 
       {jv ? (
-        <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your seven milestones">
-          {legacyCards(jv.progress.stages).map((k) => (
-            <li key={k.key} aria-current={k.state === "current" ? "step" : undefined} className={`rounded-xl border px-3 py-2.5 ${k.state === "current" ? "bg-orange-light border-orange/40" : k.state === "done" ? "bg-emerald-50 border-emerald-200" : "bg-white border-black/[0.08]"}`}>
-              <b className="block text-[14px] text-ink">{k.state === "done" ? "✓ " : ""}{k.name}</b><span className="text-[12px] text-ink-3">{k.pct}% of its steps done</span>
-            </li>
-          ))}
-        </ol>
+        <Roadmap stages={jv.progress.stages} compact />
       ) : (
       <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your stage">
         {keys.map((k, i) => (

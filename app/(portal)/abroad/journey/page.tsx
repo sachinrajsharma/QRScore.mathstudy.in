@@ -12,6 +12,7 @@ import { caseOfUser, consultantOf, timeline } from "@/lib/journey/store";
 import { appProgress } from "@/lib/journey/apps";
 import { STAGES } from "@/lib/journey/default-template";
 import { JourneyFlash as Flash } from "@/components/journey/flash";
+import { Roadmap } from "@/components/journey/Roadmap";
 import { Bar, btnGhost, btnPrimary, day, HONESTY, input, label, StatusBadge, Tile, TaskRow, when } from "@/components/journey/parts";
 import { Card, PortalPage } from "@/components/portal/shell";
 import { Alert } from "@/components/portal/ui";
@@ -54,13 +55,7 @@ export default async function JourneyDashboard() {
         </div>
       ) : null}
 
-      <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your seven milestones">
-        {cards.map((k) => (
-          <li key={k.key} aria-current={k.state === "current" ? "step" : undefined} className={`rounded-xl border px-3 py-2.5 ${k.state === "current" ? "bg-orange-light border-orange/40" : k.state === "done" ? "bg-emerald-50 border-emerald-200" : "bg-white border-black/[0.08]"}`}>
-            <b className="block text-[14px] text-ink">{k.state === "done" ? "✓ " : ""}{k.name}</b><span className="text-[12px] text-ink-3">{k.pct}% of its steps done</span>
-          </li>
-        ))}
-      </ol>
+      <Roadmap stages={v.progress.stages} />
 
       <div className="grid lg:grid-cols-3 gap-4 mb-6">
         <section aria-labelledby="ov-h" className="lg:col-span-2 bg-white rounded-2xl border border-black/[0.08] shadow-card p-5">
@@ -100,7 +95,7 @@ export default async function JourneyDashboard() {
           const tasks = byStage.get(s.no) ?? [];
           const groups = [...new Set(tasks.map((t) => t.task.sub))];
           return (
-            <details key={s.no} open={s.no === firstOpenStage} className="group bg-white rounded-2xl border border-black/[0.08] shadow-card">
+            <details key={s.no} id={`stage-${s.no}`} open={s.no === firstOpenStage} className="scroll-mt-24 group bg-white rounded-2xl border border-black/[0.08] shadow-card">
               <summary className="cursor-pointer list-none p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 min-h-[44px]">
                 <span className="flex-1 min-w-0">
                   <span className="block text-[13px] text-ink-4">{s.track ? "Optional track" : `Stage ${s.no}`}</span>
