@@ -8,6 +8,10 @@ import * as V from "@/lib/abroad/vault";
 import { answerOfferAction, submitAction, visaTickAction } from "@/app/abroad/actions";
 import { eraseAction } from "@/app/abroad/more-actions";
 import { Flash } from "@/components/abroad/parts";
+import { legacyCards } from "@/lib/journey/legacy";
+import { viewCase } from "@/lib/journey/service";
+import { caseOfUser } from "@/lib/journey/store";
+import { Bar } from "@/components/journey/parts";
 import PackagesBanner from "@/components/abroad/PackagesBanner";
 import { Card, PortalPage } from "@/components/portal/shell";
 import { Alert } from "@/components/portal/ui";
@@ -33,6 +37,8 @@ export default async function AbroadDashboard() {
   const shortlistIds = await S.shortlistIds(uid);
   const shortlist = (await Promise.all(shortlistIds.map((id) => A.universityById(id)))).filter((u): u is A.University => u !== null);
   const history = await S.historyFor(uid, 8);
+  const jc = await caseOfUser(uid);
+  const jv = jc ? await viewCase(jc.id) : null;
   const keys = Object.keys(A.STAGES);
   const at = keys.indexOf(stage);
 
@@ -42,8 +48,30 @@ export default async function AbroadDashboard() {
       {!isVerified(me) ? <><Alert kind="info">Confirm your email to save your profile, upload documents and start applications.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
 
       <PackagesBanner href="/abroad/packages" />
-      <p className="mb-5 rounded-xl border border-orange/40 bg-orange-light px-4 py-3 text-[14px] text-ink"><b>New: your full journey tracker.</b> Twelve stages with a personalised checklist, due dates, reminders and your consultant&apos;s reviews. <Link className="underline font-semibold" href="/abroad/journey">Open my journey tracker</Link></p>
+      {jv ? (
+        <section aria-labelledby="jr-h" className="mb-6 rounded-2xl border border-black/[0.08] bg-white shadow-card p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2"><h2 id="jr-h" className="text-[18px] font-semibold text-ink">Your journey: {jv.progress.pct}% complete</h2>
+            <Link href="/abroad/journey" className={`${btn} inline-flex items-center bg-orange hover:bg-orange-dark text-white`}>Open full journey</Link></div>
+          <p className="text-[13px] text-ink-3 mb-2">{jv.progress.done} of {jv.progress.total} steps done{jv.counts.overdueStudent ? ` · ${jv.counts.overdueStudent} overdue on your side` : ""}{jv.counts.awaitingReview ? ` · ${jv.counts.awaitingReview} with your consultant` : ""}</p>
+          <Bar pct={jv.progress.pct} label="Journey progress" />
+          {jv.next.length ? <><h3 className="mt-4 text-[14px] font-semibold text-ink">Do these next</h3>
+            <ul className="divide-y divide-black/[0.07]">{jv.next.slice(0, 3).map((t) => <li key={t.task.id} className="py-2 flex items-center justify-between gap-3"><span className="text-[14px] text-ink-2">{t.task.title}{t.overdue ? <b className="text-red-700"> · overdue</b> : null}</span><Link href={`/abroad/journey/task/${t.task.id}`} className={`${btn} inline-flex items-center border border-black/[0.15] hover:bg-cream-2 shrink-0`}>{t.task.action || "Open"}</Link></li>)}</ul></> : null}
+        </section>
+      ) : (
+        <section className="mb-6 rounded-2xl border border-orange/40 bg-orange-light p-5"><h2 className="text-[18px] font-semibold text-ink">Start your full journey tracker</h2>
+          <p className="text-[14px] text-ink-2 mb-3">Twelve stages with a checklist built for your country and degree, due dates, reminders and your consultant&apos;s reviews. Your profile and applications come across.</p>
+          <Link href="/abroad/journey" className={`${btn} inline-flex items-center bg-orange hover:bg-orange-dark text-white`}>Set up my journey</Link></section>
+      )}
 
+      {jv ? (
+        <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your seven milestones">
+          {legacyCards(jv.progress.stages).map((k) => (
+            <li key={k.key} aria-current={k.state === "current" ? "step" : undefined} className={`rounded-xl border px-3 py-2.5 ${k.state === "current" ? "bg-orange-light border-orange/40" : k.state === "done" ? "bg-emerald-50 border-emerald-200" : "bg-white border-black/[0.08]"}`}>
+              <b className="block text-[14px] text-ink">{k.state === "done" ? "✓ " : ""}{k.name}</b><span className="text-[12px] text-ink-3">{k.pct}% of its steps done</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
       <ol className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-2 mb-6" aria-label="Your stage">
         {keys.map((k, i) => (
           <li key={k} aria-current={i === at ? "step" : undefined} className={`rounded-xl border px-3 py-2.5 ${i === at ? "bg-orange-light border-orange/40" : i < at ? "bg-emerald-50 border-emerald-200" : "bg-white border-black/[0.08]"}`}>
@@ -51,6 +79,7 @@ export default async function AbroadDashboard() {
           </li>
         ))}
       </ol>
+      )}
 
       {!complete ? (
         <Card title="Start with your profile">
