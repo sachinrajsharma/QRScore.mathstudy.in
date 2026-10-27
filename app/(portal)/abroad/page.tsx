@@ -11,13 +11,14 @@ import { Flash } from "@/components/abroad/parts";
 import { viewCase } from "@/lib/journey/service";
 import { caseOfUser } from "@/lib/journey/store";
 import { Bar } from "@/components/journey/parts";
+import { ABROAD_PACKAGES } from "@/lib/abroad/packages";
 import { Roadmap } from "@/components/journey/Roadmap";
 import PackagesBanner from "@/components/abroad/PackagesBanner";
 import { Card, PortalPage } from "@/components/portal/shell";
 import { Alert } from "@/components/portal/ui";
 import { ResendVerification } from "@/components/portal/forms";
 
-export const metadata: Metadata = { title: "My study-abroad journey | GrowQR" };
+export const metadata: Metadata = { title: "Overseas education | GrowQR" };
 export const dynamic = "force-dynamic";
 
 const STATUS: Record<string, string> = { draft: "Draft", in_review: "In review", applied: "Applied", offer: "Offer", declined: "Declined", accepted: "Accepted" };
@@ -43,7 +44,7 @@ export default async function AbroadDashboard() {
   const at = keys.indexOf(stage);
 
   return (
-    <PortalPage user={me} active="abroad" title="Study abroad" subtitle="Your profile, applications and documents in one place, with a counselor reviewing every step." wide="full">
+    <PortalPage user={me} active="abroad" title="Overseas education" subtitle="Your journey, applications, documents and packages in one place, with a counselor reviewing every step." wide="full">
       <Flash />
       {!isVerified(me) ? <><Alert kind="info">Confirm your email to save your profile, upload documents and start applications.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
 
@@ -54,6 +55,7 @@ export default async function AbroadDashboard() {
             <Link href="/abroad/journey" className={`${btn} inline-flex items-center bg-orange hover:bg-orange-dark text-white`}>Open 12-stage checklist</Link></div>
           <p className="text-[13px] text-ink-3 mb-2">{jv.progress.done} of {jv.progress.total} steps done{jv.counts.overdueStudent ? ` · ${jv.counts.overdueStudent} overdue on your side` : ""}{jv.counts.awaitingReview ? ` · ${jv.counts.awaitingReview} with your consultant` : ""}</p>
           <Bar pct={jv.progress.pct} label="Journey progress" />
+          <p className="mt-2 text-[13px] text-ink-3">Your package: <b className="text-ink">{ABROAD_PACKAGES.find((x) => x.level === jv.level)?.name ?? "Free planning"}</b> · <Link className="underline" href="/abroad/packages">{jv.level >= 5 ? "View what is included" : "Compare and upgrade"}</Link></p>
           {jv.next.length ? <><h3 className="mt-4 text-[14px] font-semibold text-ink">Do these next</h3>
             <ul className="divide-y divide-black/[0.07]">{jv.next.slice(0, 3).map((t) => <li key={t.task.id} className="py-2 flex items-center justify-between gap-3"><span className="text-[14px] text-ink-2">{t.task.title}{t.overdue ? <b className="text-red-700"> · overdue</b> : null}</span><Link href={`/abroad/journey/task/${t.task.id}`} className={`${btn} inline-flex items-center border border-black/[0.15] hover:bg-cream-2 shrink-0`}>{t.task.action || "Open"}</Link></li>)}</ul></> : null}
         </section>

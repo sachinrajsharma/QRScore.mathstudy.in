@@ -20,7 +20,7 @@ export default async function AbroadPackagesPage({ searchParams }: { searchParam
   const owned = (await entitlementsFor(me.id).catch(() => [])).filter((e) => e.kind === "consulting" && e.status === "active" && keys.has(e.ref)).map((e) => e.ref);
   const initial = packageByKey(sp.pkg ?? "")?.key ?? "application-pro";
   return (
-    <PortalPage user={me} active="abroad-packages" title="Overseas education" subtitle="Expert help for every step of studying abroad. Pick a package to see exactly what it includes." wide="full">
+    <PortalPage user={me} active="abroad" title="Overseas education" subtitle="Expert help for every step of studying abroad. Pick a package to see exactly what it includes." wide="full">
       <div className="mb-6 flex flex-wrap gap-3 text-[14px]">
         <Link href="/abroad" className="inline-flex min-h-[44px] items-center rounded-lg border border-black/[0.15] bg-white px-4 font-semibold text-ink hover:bg-cream-2">My study-abroad journey</Link>
         <Link href="/abroad/matches" className="inline-flex min-h-[44px] items-center rounded-lg border border-black/[0.15] bg-white px-4 font-semibold text-ink hover:bg-cream-2">My university matches</Link>

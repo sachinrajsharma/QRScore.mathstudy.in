@@ -45,7 +45,7 @@ export default async function JourneyDashboard() {
   const cs = await A.countries();
 
   return (
-    <PortalPage user={me} active="abroad" title="Your 12-stage checklist" subtitle={<><Link href="/abroad" className="underline">← Back to Study abroad</Link> · {cs[c.destination]?.name ?? c.destination} · {c.degree} · {c.intake}</>} wide="full">
+    <PortalPage user={me} active="abroad" title="Your 12-stage checklist" subtitle={<><Link href="/abroad" className="underline">← Back to Overseas education</Link> · {cs[c.destination]?.name ?? c.destination} · {c.degree} · {c.intake}</>} wide="full">
       <Flash />
       {!isVerified(me) ? <><Alert kind="info">Confirm your email to save documents and complete tasks.</Alert><div className="mb-6"><ResendVerification /></div></> : null}
       {c.status === "withdrawn" ? <Alert kind="info">This journey was withdrawn. Everything you recorded is kept. Contact your consultant if you want to start again.</Alert> : null}
