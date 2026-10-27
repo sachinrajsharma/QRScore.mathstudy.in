@@ -1,20 +1,21 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { BadgeCheck, BookOpen, Briefcase, FileText, Globe2, GraduationCap, Lock, QrCode, Sparkles } from "lucide-react";
+import { BadgeCheck, BookOpen, FileText, Globe2, GraduationCap, Landmark, Lock, QrCode, Route, Sparkles, Target } from "lucide-react";
 import { PROVIDERS, providerEnabled, providerLabel, type Provider } from "@/lib/portal/oauth";
+import { authFacts, type AuthFacts } from "@/lib/portal/auth-facts";
 import "./auth.css";
 
 /** Split-screen frame for login, sign-up and the other account pages: an animated brand panel beside the form. */
 type Point = [typeof Lock, string, string];
 export type PanelKey = "login" | "signup" | "account";
 /** What the brand panel says. It leads with what the student gets, then ends with a one-line promise about safety. */
-const PANELS: Record<PanelKey, { headline: string; points: Point[] }> = {
+const PANELS = (f: AuthFacts): Record<PanelKey, { headline: string; points: Point[] }> => ({
   login: {
     headline: "Pick up right where you left off.",
     points: [
       [FileText, "Your resume, saved", "Open Resume Studio and carry on editing, on any device."],
-      [BookOpen, "Your learning, tracked", "121 courses and exam prep, with your progress remembered."],
-      [Briefcase, "Your applications in one place", "Internships and study abroad plans, stage by stage."],
+      [BookOpen, "Your learning, tracked", `${f.courses} courses, exam prep and practice studios, with your progress remembered.`],
+      [Route, "Your journey, stage by stage", "Your overseas roadmap, applications and consultant in one place."],
     ],
   },
   signup: {
@@ -22,7 +23,7 @@ const PANELS: Record<PanelKey, { headline: string; points: Point[] }> = {
     points: [
       [GraduationCap, "Learn with structure", "Courses, mock tests and exam prep for school, college and careers."],
       [FileText, "Build a resume that works", "Templates, live scoring and ATS checks in Resume Studio."],
-      [Globe2, "Go further", "Internships, a verified Skill Passport and study abroad tools."],
+      [Globe2, "Go further", `A ${f.stages}-stage study abroad journey, a verified Skill Passport and internships.`],
     ],
   },
   account: {
@@ -33,15 +34,30 @@ const PANELS: Record<PanelKey, { headline: string; points: Point[] }> = {
       [Globe2, "Internships and study abroad", "Opportunities and plans, all in one account."],
     ],
   },
-};
+});
 
-const STATS: [string, string][] = [["121", "courses"], ["45", "resume templates"], ["58", "universities"]];
+/** The studios, shown as chips so a visitor sees how much is inside one account. */
+const STUDIOS = ["Resume Studio", "Maths Speed Studio", "Mathematics Studio", "English Reading Studio", "English Writing Studio", "Skill Passport"];
 
-export function AuthSplit({ title, subtitle, children, eyebrow = "Welcome", panel = "account" }: { title: string; subtitle?: ReactNode; children: ReactNode; eyebrow?: string; panel?: PanelKey }) {
-  const P = PANELS[panel];
+function stats(f: AuthFacts): Array<[typeof Lock, string, string]> {
+  const list: Array<[typeof Lock, string, string]> = [
+    [BookOpen, String(f.courses), "courses"],
+    [FileText, String(f.templates), "resume templates"],
+    [Target, String(f.exams), "exam-prep courses"],
+    [Route, String(f.stages), "stage overseas journey"],
+  ];
+  if (f.universities) list.push([Landmark, String(f.universities), "universities"]);
+  list.push([Globe2, String(f.countries), "study destinations"]);
+  return list;
+}
+
+export async function AuthSplit({ title, subtitle, children, eyebrow = "Welcome", panel = "account" }: { title: string; subtitle?: ReactNode; children: ReactNode; eyebrow?: string; panel?: PanelKey }) {
+  const facts = await authFacts();
+  const P = PANELS(facts)[panel];
+  const S = stats(facts);
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.02fr_1fr]">
-      <aside className="auth-panel relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex" aria-label="About GrowQR">
+      <aside className="auth-panel relative hidden flex-col justify-between gap-8 overflow-hidden p-12 text-white lg:flex" aria-label="About GrowQR">
         <span className="auth-orb -left-16 top-24 h-72 w-72 bg-[#7857ff]" aria-hidden />
         <span className="auth-orb bottom-10 right-0 h-64 w-64 bg-[#ff6a2f]" style={{ animationDelay: "-6s" }} aria-hidden />
         <span className="auth-orb left-1/3 top-1/2 h-48 w-48 bg-[#ec4899]" style={{ animationDelay: "-11s" }} aria-hidden />
@@ -54,19 +70,23 @@ export function AuthSplit({ title, subtitle, children, eyebrow = "Welcome", pane
         <div className="relative z-10 max-w-[30rem]">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1 text-[11.5px] font-semibold uppercase tracking-[0.18em] text-[#ffd7bd]"><Sparkles className="h-3.5 w-3.5" aria-hidden /> Learn. Build. Go global.</p>
           <p className="auth-headline mt-4 [font-size:clamp(2.1rem,3.4vw,3.2rem)] font-bold leading-[1.05] tracking-tight">{P.headline}</p>
-          <ul className="mt-9 space-y-4">
+          <ul className="mt-7 space-y-3">
             {P.points.map(([Icon, t, d]) => (
-              <li key={t} className="auth-card flex gap-3.5 rounded-2xl p-4">
+              <li key={t} className="auth-card flex gap-3.5 rounded-2xl p-3.5">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10"><Icon className="h-5 w-5 text-[#ffb98f]" aria-hidden /></span>
                 <span><b className="block text-[15px]">{t}</b><span className="text-[13.5px] leading-snug text-white/70">{d}</span></span>
               </li>
             ))}
           </ul>
-          <div className="mt-7 grid grid-cols-3 gap-3 text-center">
-            {STATS.map(([n, l]) => (
-              <div key={l} className="auth-float rounded-2xl bg-white/10 px-2 py-3 ring-1 ring-white/15">
+          <ul className="mt-5 flex flex-wrap gap-2" aria-label="Inside your account">
+            {STUDIOS.map((n) => <li key={n} className="rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium text-white/85 ring-1 ring-white/15">{n}</li>)}
+          </ul>
+          <div className={`mt-5 grid gap-3 text-center ${S.length > 4 ? "grid-cols-3" : "grid-cols-2"}`}>
+            {S.map(([Icon, n, l], i) => (
+              <div key={l} className="auth-float rounded-2xl bg-white/10 px-2 py-3 ring-1 ring-white/15" style={{ animationDelay: `-${i * 1.1}s` }}>
+                <Icon className="mx-auto mb-1 h-4 w-4 text-[#ffb98f]" aria-hidden />
                 <b className="block text-[1.5rem] font-bold leading-none text-white">{n}</b>
-                <span className="mt-1 block text-[11.5px] text-white/70">{l}</span>
+                <span className="mt-1 block text-[11.5px] leading-tight text-white/70">{l}</span>
               </div>
             ))}
           </div>
