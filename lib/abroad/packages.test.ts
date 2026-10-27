@@ -6,7 +6,7 @@ import { INDEX } from "@/components/home-options/nav-data";
 
 describe("overseas education packages", () => {
   it("has five levels at the prices the owner set, each building on the one before", () => {
-    expect(ABROAD_PACKAGES.map((p) => [p.level, p.from])).toEqual([[1, 1999], [2, 5999], [3, 14999], [4, 27999], [5, 55999]]);
+    expect(ABROAD_PACKAGES.map((p) => [p.level, p.from])).toEqual([[1, 1999], [2, 7999], [3, 14999], [4, 27999], [5, 55999]]);
     ABROAD_PACKAGES.forEach((p, i) => expect(p.builds).toBe(i === 0 ? undefined : ABROAD_PACKAGES[i - 1].name));
     expect(ABROAD_PACKAGES.map((p) => p.reaches)).toEqual([1, 2, 3, 4, 5]);
   });

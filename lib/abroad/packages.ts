@@ -45,7 +45,7 @@ export const ABROAD_PACKAGES: AbroadPackage[] = [
   },
   {
     key: "application-pro", level: 2, name: "Application Pro", tagline: "Apply with a stronger file.", target: "Students who know what to study and want hands-on help structuring applications to give themselves the best chance.",
-    from: 5999, online: true, reaches: 2, builds: "Discovery & Shortlisting", accent: "#7857ff", accent2: "#b39dff",
+    from: 7999, online: true, reaches: 2, builds: "Discovery & Shortlisting", accent: "#7857ff", accent2: "#b39dff",
     headline: ["SOP and LOR strategy", "Resume refinement", "Applications for up to 3 universities"],
     adds: [{ title: "Adds", items: [
       "SOP and LOR strategy: guidelines, templates and one round of detailed editing for Statements of Purpose and Letters of Recommendation",
