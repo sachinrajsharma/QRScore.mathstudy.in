@@ -8,7 +8,8 @@ import { currentUser } from "@/lib/portal/guard";
 import { countryOptions } from "@/lib/pay/countries";
 import { PayError } from "@/lib/pay/orders";
 import { quoteOrder, quoteSchema, type Quote } from "@/lib/pay/quote";
-import { activeProviders } from "@/lib/pay/providers";
+import { paymentsPreview } from "@/lib/pay/providers";
+import PreviewBanner from "@/components/pay/PreviewBanner";
 
 export const metadata: Metadata = { title: "Checkout | GrowQR", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -34,9 +35,10 @@ function Notice({ title, children }: { title: string; children: React.ReactNode 
 
 export default async function CheckoutPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
-  if (!databaseConfigured() || activeProviders().length === 0) {
+  if (!databaseConfigured()) {
     return <Notice title="Online payment is not open yet">We are still switching on online payments. Please <Link href="/contact" className="font-semibold underline">contact us</Link> and we will help you get started.</Notice>;
   }
+  const preview = paymentsPreview(); // no provider is on: show the whole checkout as a demo, with no way to pay
   const items = (sp.sku ?? "").split(",").filter(Boolean).slice(0, 10).map((s) => ({ sku: s.trim(), qty: 1 }));
   if (!items.length) return <Notice title="Nothing to buy">Choose a plan or product first.</Notice>;
 
@@ -60,7 +62,8 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
       <main className="mx-auto max-w-6xl px-5 pb-24 pt-28 sm:pt-32">
         <h1 className="text-[2rem] font-bold tracking-tight text-ink sm:text-[2.4rem]">Checkout</h1>
         <p className="mb-8 mt-2 text-ink-3">Review your order, then pay securely.</p>
-        <CheckoutForm items={items} initialCoupon={coupon} initialCountry={country} countries={countryOptions()} user={me ? { name: me.name, email: me.email } : null} initial={initial} initialError={initialError} returnPath={returnPath} />
+        {preview ? <PreviewBanner className="mb-8" /> : null}
+        <CheckoutForm preview={preview}items={items} initialCoupon={coupon} initialCountry={country} countries={countryOptions()} user={me ? { name: me.name, email: me.email } : null} initial={initial} initialError={initialError} returnPath={returnPath} />
       </main>
     </PageShell>
   );

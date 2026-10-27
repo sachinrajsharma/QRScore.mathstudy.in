@@ -1,13 +1,12 @@
 "use client";
 
 import { ShoppingCart } from "lucide-react";
-import { useCart, usePaymentsOn } from "@/lib/cart/store";
+import { useCart } from "@/lib/cart/store";
 
-/** The header's cart icon with the number of items. Hidden until online payment is on. */
+/** The header's cart icon with the number of items. Always shown; while online payment is off the cart and checkout run as a preview. */
 export default function CartLink() {
-  const on = usePaymentsOn();
   const { skus, ready } = useCart();
-  if (!on || !ready) return null;
+  if (!ready) return null;
   return (
     <a href="/cart" aria-label={`Cart, ${skus.length} ${skus.length === 1 ? "item" : "items"}`} className="relative grid h-11 w-11 place-items-center rounded-full border border-black/10 bg-white/70 transition hover:border-orange">
       <ShoppingCart className="h-[18px] w-[18px]" aria-hidden />

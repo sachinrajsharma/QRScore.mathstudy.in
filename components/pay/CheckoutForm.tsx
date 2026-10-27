@@ -20,6 +20,8 @@ interface Props {
   initial: Quote | null;
   initialError: string | null;
   returnPath: string;
+  /** No payment provider is on: everything is shown, but the pay button is replaced by a notice. */
+  preview?: boolean;
 }
 
 type Phase = "idle" | "pricing" | "creating" | "redirecting" | "razorpay" | "error";
@@ -50,7 +52,7 @@ function loadRazorpay(): Promise<boolean> {
   });
 }
 
-export default function CheckoutForm({ items, initialCoupon, initialCountry, countries, user, initial, initialError, returnPath }: Props) {
+export default function CheckoutForm({ items, initialCoupon, initialCountry, countries, user, initial, initialError, returnPath, preview = false }: Props) {
   const router = useRouter();
   const [country, setCountry] = useState(initialCountry);
   const [currency, setCurrency] = useState<string | undefined>(initial?.currency);
@@ -155,7 +157,7 @@ export default function CheckoutForm({ items, initialCoupon, initialCountry, cou
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.15fr,0.85fr]">
-      <form onSubmit={(e) => { e.preventDefault(); void pay(); }} noValidate aria-describedby={message ? "checkout-alert" : undefined} className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
+      <form onSubmit={(e) => { e.preventDefault(); if (!preview) void pay(); }} noValidate aria-describedby={message ? "checkout-alert" : undefined} className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
         <h2 className="text-[1.25rem] font-semibold text-ink">Your details</h2>
         <p className="mt-1 text-[0.9rem] text-ink-3">We use these only for your receipt and for taxes.</p>
 
@@ -220,7 +222,11 @@ export default function CheckoutForm({ items, initialCoupon, initialCountry, cou
           {fieldErrors.agree ? <p id="co-agree-err" className="mt-1 text-[0.82rem] text-red-700">{fieldErrors.agree}</p> : null}
         </div>
 
-        {quote?.requiresLogin ? (
+        {preview ? (
+          <button type="button" disabled aria-disabled="true" className="mt-7 inline-flex min-h-[54px] w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-black/15 px-6 text-[1rem] font-bold text-ink-3">
+            <Lock className="h-4 w-4" aria-hidden /> Online payments are not active (demo only)
+          </button>
+        ) : quote?.requiresLogin ? (
           <p className="mt-6 rounded-xl bg-cream-2 px-4 py-3 text-[0.9rem] text-ink-2">You need an account to buy this. <Link href={`/login?next=${encodeURIComponent(returnPath)}`} className="font-semibold underline">Log in</Link> or <Link href={`/signup?next=${encodeURIComponent(returnPath)}`} className="font-semibold underline">create a free account</Link>, then come back here.</p>
         ) : (
           <button type="submit" disabled={!quote || busy} className="mt-7 inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-xl bg-ink px-6 text-[1rem] font-bold text-white transition hover:opacity-90 disabled:opacity-50">

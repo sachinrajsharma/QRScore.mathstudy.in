@@ -30,7 +30,14 @@ export function selectProvider(c: { country: string; currency: string; requested
   return options[0] ?? null;
 }
 
-/** Currencies in which at least one active provider can take a payment from this country. */
+/**
+ * True while no payment provider is switched on (no keys set). The shop then runs as a PREVIEW: the cart and the checkout page open and show real prices,
+ * but nothing can be paid (creating an order still fails with "no_provider"). It lets a demo site show the whole buying journey.
+ */
+export const paymentsPreview = (): boolean => activeProviders().length === 0;
+
+/** Currencies in which at least one active provider can take a payment from this country. In preview every currency the items are priced in is shown. */
 export function payableCurrencies(country: string, candidates: string[]): string[] {
+  if (paymentsPreview()) return candidates;
   return candidates.filter((cur) => providersFor({ country, currency: cur }).length > 0);
 }

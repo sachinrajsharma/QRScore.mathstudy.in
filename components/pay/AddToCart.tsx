@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { Check, ShoppingCart } from "lucide-react";
-import { addToCart, CART_MAX, useCart, usePaymentsOn } from "@/lib/cart/store";
+import { addToCart, CART_MAX, useCart } from "@/lib/cart/store";
 import { trackCatalog } from "@/lib/analytics";
 
-/** "Add to cart" for one product code. Shows nothing until online payment is switched on. */
+/** "Add to cart" for one product code. Always shown; while online payment is off the cart and checkout run as a preview. */
 export default function AddToCart({ sku, label = "Add to cart", compact = false, className = "" }: { sku: string; label?: string; compact?: boolean; className?: string }) {
-  const on = usePaymentsOn();
   const { skus, ready } = useCart();
-  if (!on || !ready) return null;
+  if (!ready) return null;
   const inCart = skus.includes(sku);
   const base = `inline-flex items-center justify-center gap-2 rounded-lg font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep ${compact ? "min-h-[40px] px-3 text-[13px]" : "min-h-[48px] px-6 text-[15px]"}`;
   if (inCart) {
