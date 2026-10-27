@@ -195,7 +195,7 @@ describe.skipIf(!DB)("study-abroad tools on a real database", () => {
 
   it("exports and then erases everything, leaving only the audit trail", async () => {
     const data = await P.exportData(uid);
-    expect(Object.keys(data).sort()).toEqual(["applications", "documents", "exported_at", "funds", "loans", "mock_interviews", "profile", "shortlist", "status_history", "visa_cases"]);
+    expect(Object.keys(data).sort()).toEqual(["applications", "documents", "exported_at", "funds", "journey", "loans", "mock_interviews", "profile", "shortlist", "status_history", "visa_cases"]);
     expect((data.applications as unknown[]).length).toBe(1);
     expect((data.mock_interviews as unknown[]).length).toBeGreaterThan(0);
     expect(JSON.stringify(data)).not.toMatch(/stored_name|password/);

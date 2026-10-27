@@ -144,7 +144,7 @@ export default async function JourneyDashboard() {
             <div className="overflow-x-auto mt-2"><table className="w-full text-[14px] min-w-[28rem]"><caption className="sr-only">Offers side by side</caption>
               <thead><tr className="text-left text-ink-4"><th scope="col" className="py-1.5 pr-3 font-medium">University</th><th scope="col" className="pr-3 font-medium">Type</th><th scope="col" className="pr-3 font-medium">Reply by</th><th scope="col" className="pr-3 font-medium">Deposit</th><th scope="col" className="font-medium">Status</th></tr></thead>
               <tbody>{offers.map((a) => <tr key={a.id} className="border-t border-black/[0.07]"><th scope="row" className="py-2 pr-3 text-left font-medium text-ink">{a.uniName}<br /><span className="font-normal text-ink-3">{a.programme}</span></th><td className="pr-3 capitalize">{a.offerType || "to be recorded"}</td><td className="pr-3">{day(a.offerDeadline)}</td><td className="pr-3">{a.depositAmount || "—"}</td><td className="capitalize">{a.status}</td></tr>)}</tbody></table>
-              <p className="mt-2 text-[12px] text-ink-4">Tuition, scholarship and living costs are on each university's own offer letter. Confirm every figure there.</p></div>)}
+              <p className="mt-2 text-[12px] text-ink-4">Tuition, scholarship and living costs are on each university&apos;s own offer letter. Confirm every figure there.</p></div>)}
         </section>
         <section aria-labelledby="vs-h" className="bg-white rounded-2xl border border-black/[0.08] shadow-card p-5 mb-2">
           <h2 id="vs-h" className="text-[18px] font-semibold text-ink">Visa progress</h2>
@@ -178,7 +178,7 @@ async function Setup({ me }: { me: Awaited<ReturnType<typeof requireUser>> }) {
           <div><label className={label} htmlFor="destination">Destination country</label>
             <select id="destination" name="destination" required defaultValue={pre.destination ?? ""} className={input}><option value="" disabled>Choose…</option>{Object.entries(cs).map(([k, c]) => <option key={k} value={k}>{c.name}</option>)}</select></div>
           <div><label className={label} htmlFor="degree">Degree level</label>
-            <select id="degree" name="degree" required defaultValue={pre.degree ?? "PG"} className={input}><option value="UG">Undergraduate</option><option value="PG">Master's</option><option value="PhD">PhD / research</option></select></div>
+            <select id="degree" name="degree" required defaultValue={pre.degree ?? "PG"} className={input}><option value="UG">Undergraduate</option><option value="PG">Master&apos;s</option><option value="PhD">PhD / research</option></select></div>
           <div><label className={label} htmlFor="intake">Target intake</label>
             <select id="intake" name="intake" required defaultValue={pre.intake && opts.includes(pre.intake) ? pre.intake : opts[0]} className={input}>{opts.map((o) => <option key={o}>{o}</option>)}</select></div>
         </div>

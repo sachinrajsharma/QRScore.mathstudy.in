@@ -57,7 +57,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
 
       {blocked ? (
         <section aria-labelledby="blk" className="rounded-2xl border border-red-200 bg-red-50 p-5 mb-5">
-          <h2 id="blk" className="text-[17px] font-semibold text-red-900">Why you can't start yet</h2>
+          <h2 id="blk" className="text-[17px] font-semibold text-red-900">Why you can&apos;t start yet</h2>
           <p className="text-[14px] text-red-900 mt-1">{v.block.reason}</p>
           <ul className="mt-2 space-y-1 text-[14px] text-red-900">{v.block.blockers.map((b) => <li key={b.taskId}><Link className="underline" href={`/abroad/journey/task/${b.taskId}`}>{b.title}</Link>: {b.howToUnblock}</li>)}</ul>
           {v.block.kind === "manual" ? <p className="mt-2 text-[14px] text-red-900">Your consultant will unblock this when it is resolved.</p> : null}
@@ -124,7 +124,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
                 {gapsComplete.length ? <p className="mt-2 text-[13px] text-amber-900">Still needed: {gapsComplete.map((g) => g.label).join("; ")}.</p> : null}
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button name="to" value={task.review === "consultant" ? "submitted_for_review" : "completed"} className={btnPrimary} type="submit">{task.review === "consultant" ? "Submit for review" : "Mark as done"}</button>
-                  {task.external ? <button name="to" value="waiting_on_university" className={btnGhost} type="submit" formNoValidate={false}>I'm waiting for someone else</button> : null}
+                  {task.external ? <button name="to" value="waiting_on_university" className={btnGhost} type="submit" formNoValidate={false}>I&apos;m waiting for someone else</button> : null}
                 </div>
                 <p className="mt-2 text-[12px] text-ink-4">A step is only marked done when the evidence above is on file. Opening a page or pressing a button alone never completes it.</p>
               </form>
