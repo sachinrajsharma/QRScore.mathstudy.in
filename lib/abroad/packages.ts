@@ -55,11 +55,11 @@ export const ABROAD_PACKAGES: AbroadPackage[] = [
     ] }],
   },
   {
-    key: "incubator", level: 3, name: "Academic & Admission Incubator", tagline: "Admissions plus test preparation.", target: "Students who want university placement and rigorous test preparation in one integrated plan.",
+    key: "incubator", level: 3, name: "Academic & Admission Incubator", tagline: "Admissions plus IELTS coaching.", target: "Students who want university placement and IELTS coaching in one integrated plan.",
     from: 14999, online: true, reaches: 3, builds: "Application Pro", accent: "#2fd39a", accent2: "#8cf0c9",
-    headline: ["SAT and IELTS preparation", "Up to 8 applications", "Scholarship assistance"],
+    headline: ["IELTS coaching", "Up to 8 applications", "Scholarship assistance"],
     adds: [{ title: "Adds", items: [
-      "SAT and IELTS preparation: structured training modules, mock tests and practice resources",
+      "IELTS coaching: structured training modules, mock tests and practice resources",
       "Expanded applications: processing and submission for up to 8 universities",
       "Scholarship assistance: finding and applying for university grants, merit scholarships and financial aid",
       "University interview prep: mock interview sessions to prepare for admissions committees",
@@ -116,7 +116,7 @@ export const MATRIX: Array<{ label: string; level: 1 | 2 | 3 | 4 | 5; values?: P
   { label: "Resume refinement for international admissions", level: 2 },
   { label: "Applications processed and submitted", level: 2, values: { 2: "Up to 3", 3: "Up to 8", 4: "Up to 8", 5: "Up to 8" } },
   { label: "Application tracking on your dashboard", level: 2 },
-  { label: "SAT and IELTS preparation with mock tests", level: 3 },
+  { label: "IELTS coaching with mock tests", level: 3 },
   { label: "Scholarship assistance", level: 3 },
   { label: "University interview prep", level: 3 },
   { label: "Dedicated 1-on-1 mentorship", level: 4 },
