@@ -15,7 +15,7 @@ export const TYPES: Record<string, string> = {
 export const REQUIRED = ["passport", "transcripts", "sop"];
 export const MAX_BYTES = 8 * 1024 * 1024;
 export const MAX_FILES = 30;
-const ALLOWED: Record<string, string[]> = { pdf: ["application/pdf"], jpg: ["image/jpeg"], jpeg: ["image/jpeg"], png: ["image/png"], docx: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"] };
+export const ALLOWED: Record<string, string[]> = { pdf: ["application/pdf"], jpg: ["image/jpeg"], jpeg: ["image/jpeg"], png: ["image/png"], docx: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"] };
 const LINK_TTL = 300; // seconds
 
 export interface Doc { id: number; user_id: number; doc_type: string; original_name: string; stored_name: string; mime: string; size: number; status: string; reject_reason: string; verified_by: number | null; verified_at: string | null; created_at: string; scan_status: string; scan_note: string }
@@ -41,7 +41,7 @@ export async function unverifiedRequired(uid: number): Promise<string[]> {
 }
 
 /** The file signature must match the extension: the declared type is never trusted. */
-function sniff(bytes: Uint8Array, ext: string): string | null {
+export function sniff(bytes: Uint8Array, ext: string): string | null {
   const h = (sig: number[]) => sig.every((x, i) => bytes[i] === x);
   if (ext === "pdf" && h([0x25, 0x50, 0x44, 0x46])) return "application/pdf";
   if ((ext === "jpg" || ext === "jpeg") && h([0xff, 0xd8, 0xff])) return "image/jpeg";
