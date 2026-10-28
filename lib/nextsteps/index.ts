@@ -1,5 +1,4 @@
-import { INTERNSHIPS } from "@/components/home-options/data";
-import { SAMPLE_JOBS } from "./sample-jobs";
+import { SAMPLE_INTERNSHIPS, SAMPLE_JOBS } from "./sample-jobs";
 
 /**
  * "What to do next": every GrowQR service that could raise a student's QR Score or move their career on, ordered by what their own resume needs.
@@ -48,7 +47,8 @@ export function buildNextSteps(i: NextInput): Group[] {
   groups.push({ key: "learn", title: "Learn", blurb: `Courses picked from what your resume shows (${i.domainLabel}).`, steps: courses.length ? courses : [{ title: "Browse all courses", why: "Self-paced courses with certificates.", href: "/courses", cta: "Browse courses" }] });
 
   // 3. internships (sample listings, ranked by skill overlap)
-  const interns = INTERNSHIPS.map((x) => ({ x, hit: overlap(i.skills, x.skills) })).sort((a, b) => b.hit.length - a.hit.length).slice(0, 3);
+  const interns = SAMPLE_INTERNSHIPS.map((x) => ({ x, hit: overlap(i.skills, x.skills), dom: x.domains.includes(i.domainKey) ? 1 : 0 }))
+    .sort((a, b) => (b.hit.length + b.dom * 2) - (a.hit.length + a.dom * 2)).slice(0, 3);
   groups.push({
     key: "internships", title: "Internships", blurb: "Sample listings, matched on the skills found in your resume.",
     steps: interns.map(({ x, hit }) => ({

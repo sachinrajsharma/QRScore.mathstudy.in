@@ -53,3 +53,16 @@ describe("next steps", () => {
     expect(plan(90)).toBe("Gold plan");
   });
 });
+
+describe("internship matching", () => {
+  it("shows an internship from the student's own field first", () => {
+    const first = (domainKey: string, skills: string[]) => buildNextSteps({ ...base, domainKey, skills }).find((g) => g.key === "internships")!.steps[0].title;
+    expect(first("marketing", ["SEO", "Google Analytics", "Canva"])).toContain("Marketing");
+    expect(first("finance", ["Excel", "Tally"])).toContain("Finance");
+    expect(first("design", ["Figma", "Photoshop"])).toContain("Design");
+  });
+  it("does not lead a marketing student into a machine learning internship", () => {
+    const steps = buildNextSteps({ ...base, domainKey: "marketing", skills: ["SEO", "Content Marketing", "Excel"] }).find((g) => g.key === "internships")!.steps;
+    expect(steps[0].title).not.toContain("Machine Learning");
+  });
+});
