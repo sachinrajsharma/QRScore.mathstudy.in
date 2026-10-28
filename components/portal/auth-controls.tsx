@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { suggestPassword } from "@/lib/portal/password-suggest";
 import { useFormStatus } from "react-dom";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { AlertCircle, CheckCircle2, Loader2, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
@@ -50,8 +51,8 @@ export function TextField({ label, name, type = "text", icon, error, defaultValu
 
 const BAR = ["bg-red-500", "bg-red-500", "bg-amber-500", "bg-lime-500", "bg-emerald-600"];
 
-export function PasswordInput({ label = "Password", name = "password", icon, error, autoComplete = "current-password", hint, meter = false, email = "", fullName = "" }: {
-  label?: string; name?: string; icon?: ReactNode; error?: string; autoComplete?: string; hint?: string; meter?: boolean; email?: string; fullName?: string;
+export function PasswordInput({ label = "Password", name = "password", icon, error, autoComplete = "current-password", hint, meter = false, email = "", fullName = "", suggest = false }: {
+  label?: string; name?: string; icon?: ReactNode; error?: string; autoComplete?: string; hint?: string; meter?: boolean; email?: string; fullName?: string; suggest?: boolean;
 }) {
   const [show, setShow] = useState(false);
   const [caps, setCaps] = useState(false);
@@ -74,6 +75,7 @@ export function PasswordInput({ label = "Password", name = "password", icon, err
           <span aria-hidden className="text-[12.5px] font-semibold">{show ? "Hide" : "Show"}</span>
         </button>
       </div>
+      {suggest ? <button type="button" onClick={() => { setValue(suggestPassword()); setShow(true); }} className="mt-2 text-[13px] font-semibold text-[#5b3fe0] underline underline-offset-2">Suggest a strong password</button> : null}
       {caps ? <p className="mt-1.5 flex items-center gap-1.5 text-[12.5px] font-medium text-amber-700" role="status"><TriangleAlert className="h-3.5 w-3.5" aria-hidden /> Caps Lock is on</p> : null}
       {s && value ? (
         <div className="mt-2" aria-live="polite">

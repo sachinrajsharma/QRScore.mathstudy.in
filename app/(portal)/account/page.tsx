@@ -4,6 +4,7 @@ import { isVerified, mfaRequiredFor } from "@/lib/portal/auth";
 import { requireUser } from "@/lib/portal/guard";
 import PlanCard from "@/components/pay/PlanCard";
 import MyProducts from "@/components/pay/MyProducts";
+import QrDashboard from "@/components/portal/QrDashboard";
 import UpgradePlans from "@/components/pay/UpgradePlans";
 import ServicesCard from "@/components/pay/ServicesCard";
 import { planInfo } from "@/lib/pay/plans";
@@ -34,6 +35,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
     <PortalPage user={me} active="account" title={`Hello, ${me.name.split(" ")[0]}`} subtitle={`${ROLE_LABEL[me.role]} account`}>
       {sp.welcome ? <Alert kind="success">Welcome to GrowQR. Your account is ready.</Alert> : null}
 
+      {me.role === "student" ? <QrDashboard userId={me.id} name={me.name} justSaved={sp.scan === "1"} /> : null}
       {me.role === "student" ? <MyProducts userId={me.id} /> : null}
 
       {me.role === "student" ? (

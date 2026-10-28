@@ -11,6 +11,8 @@ import { getSession, startSession, endSession, endAllSessions, dropSessionData }
 import * as totp from "@/lib/portal/totp";
 import { verifyPasswordFor } from "@/lib/portal/auth";
 import { submit as submitCollege } from "@/lib/portal/colleges";
+import { readGuest } from "@/lib/qrscore/guest";
+import { attachGuestScan } from "@/lib/qrscore/claim";
 
 /**
  * Server Actions behind the account forms. Next.js checks that each request comes from this site (same-origin), which is the
@@ -104,9 +106,19 @@ export async function signupAction(_prev: FormState, fd: FormData): Promise<Form
   const r = await auth.register({ role, name: v.name, email: v.email, password, college: v.college, company: v.company }, await clientIp());
   if (!r.ok) return { error: r.error, values };
   if (isStudent && str(fd, "college_state") !== "") await submitCollege(r.userId, await clientIp(), v.college, str(fd, "college_state"), "", false).catch(() => undefined); // an unlisted college goes to admin review
+  // A visitor who scanned a resume on the home page keeps their result: read it before the new session replaces the anonymous one.
+  const guest = isStudent && fd.get("claim") === "1" ? readGuest((await getSession())?.data) : null;
   await startSession(r.userId);
   await audit(r.userId, r.userId, "signup", role);
-  redirect(`${auth.homeFor(role)}?welcome=1`);
+  if (guest) {
+    try {
+      await attachGuestScan(r.userId, v.name, guest, { publish: fd.get("publish") === "on" });
+      await audit(r.userId, r.userId, "signup.scan_saved", String(guest.score));
+    } catch (e) {
+      console.error("[signup] saving the scanned resume failed:", (e as Error).message); // the account still exists; they can score again from the dashboard
+    }
+  }
+  redirect(`${auth.homeFor(role)}?welcome=1${guest ? "&scan=1" : ""}`);
 }
 
 // ---- password reset ------------------------------------------------------------------------------------------------

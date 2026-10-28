@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { VERTICALS, portal, type VerticalKey } from "./data";
 import { COUNTRIES, INTERNSHIPS } from "@/components/home-options/data";
+import ResumeDrop from "./ResumeDrop";
 
 const intern = INTERNSHIPS[2];
 
@@ -138,12 +139,13 @@ export default function Hero() {
           <p data-rv style={{ ["--d" as string]: ".12s" }} className="mt-6 max-w-[34em] text-[1.12rem] leading-relaxed text-white/75">
             Learn new skills, build your career, discover global education opportunities, and unlock your next big move, all in one place.
           </p>
-          <div data-rv style={{ ["--d" as string]: ".18s" }} className="mt-9 flex flex-wrap items-center gap-3">
-            <a href="#pillars" className="hx-btn hx-btn-pri">Explore Your Future <ArrowRight className="h-4 w-4" aria-hidden /></a>
-            <a href="#pillars" className="hx-btn hx-btn-ghost">Discover All Services</a>
+          <div data-rv style={{ ["--d" as string]: ".16s" }}><ResumeDrop /></div>
+          <div data-rv style={{ ["--d" as string]: ".18s" }} className="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#pillars" className="hx-btn hx-btn-ghost">Explore Your Future <ArrowRight className="h-4 w-4" aria-hidden /></a>
+            <a href="#pillars" className="hx-btn px-3 text-white/80 underline-offset-4 hover:text-white hover:underline">Discover All Services</a>
             <Link href={portal("/studio")} className="hx-btn px-3 text-white/80 underline-offset-4 hover:text-white hover:underline">Build My Resume</Link>
           </div>
-          <a href="#pillars" className="mt-14 hidden items-center gap-2 text-[0.8rem] text-white/50 transition hover:text-white md:inline-flex" aria-label="Scroll to services">
+          <a href="#pillars" className="mt-10 hidden items-center gap-2 text-[0.8rem] text-white/50 transition hover:text-white md:inline-flex" aria-label="Scroll to services">
             <ChevronDown className="h-4 w-4 animate-bounce motion-reduce:animate-none" aria-hidden /> Scroll to explore
           </a>
         </div>

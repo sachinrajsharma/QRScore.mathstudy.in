@@ -43,18 +43,20 @@ export function MfaLoginForm() {
   );
 }
 
-export function SignupForm({ role, captcha = off }: { role: "student" | "employer" | "teacher" | "parent"; captcha?: CaptchaInfo }) {
+/** `scan` is set when the visitor scanned a resume on the home page: their details are pre-filled and the result is saved to the new account. */
+export function SignupForm({ role, captcha = off, scan }: { role: "student" | "employer" | "teacher" | "parent"; captcha?: CaptchaInfo; scan?: { name: string; email: string; college: string; publishAvailable: boolean } }) {
   const [s, action] = useActionState(signupAction, none);
   const [human, setHuman] = useState(false);
-  const [email, setEmail] = useState(s.values?.email ?? "");
-  const [name, setName] = useState(s.values?.name ?? "");
+  const [email, setEmail] = useState(s.values?.email ?? scan?.email ?? "");
+  const [name, setName] = useState(s.values?.name ?? scan?.name ?? "");
   const isE = role === "employer";
   const f = s.fields ?? {};
-  const v = s.values ?? {};
+  const v: Record<string, string | undefined> = { ...(scan ? { name: scan.name, email: scan.email, college: scan.college } : {}), ...(s.values ?? {}) };
   return (
     <form action={action} noValidate>
       {s.error ? <Notice>{s.error}</Notice> : null}
       <input type="hidden" name="role" value={role} />
+      {scan ? <input type="hidden" name="claim" value="1" /> : null}
       <Trap />
       <TextField label="Full name" name="name" autoComplete="name" icon={<User className="h-[18px] w-[18px]" />} defaultValue={v.name} error={f.name} onChange={setName} />
       <TextField label={isE ? "Work email" : "Email address"} name="email" type="email" inputMode="email" autoComplete="email" icon={<Mail className="h-[18px] w-[18px]" />} defaultValue={v.email} error={f.email} onChange={setEmail} />
@@ -66,7 +68,7 @@ export function SignupForm({ role, captcha = off }: { role: "student" | "employe
       ) : role === "student" ? (
         <CollegeField defaultValue={v.college} error={f.college} states={COLLEGE_STATES} />
       ) : null}
-      <PasswordInput label="Create a password" autoComplete="new-password" icon={<Lock className="h-[18px] w-[18px]" />} error={f.password} meter email={email} fullName={name} hint="At least 8 characters. A short phrase of unrelated words works well." />
+      <PasswordInput label="Create a password" autoComplete="new-password" icon={<Lock className="h-[18px] w-[18px]" />} error={f.password} meter suggest email={email} fullName={name} hint="At least 8 characters. A short phrase of unrelated words works well." />
       <div className="mb-5">
         <label className="flex min-h-[44px] items-start gap-3 text-[13.5px] text-ink-3">
           <input type="checkbox" name="terms" className="mt-1 h-5 w-5 shrink-0 accent-[#7857ff]" required />
@@ -74,8 +76,17 @@ export function SignupForm({ role, captcha = off }: { role: "student" | "employe
         </label>
         {f.terms ? <p className="mt-1 text-[13px] text-red-700">{f.terms}</p> : null}
       </div>
+      {scan?.publishAvailable ? (
+        <div className="mb-5">
+          <label className="flex min-h-[44px] items-start gap-3 text-[13.5px] text-ink-3">
+            <input type="checkbox" name="publish" defaultChecked className="mt-1 h-5 w-5 shrink-0 accent-[#7857ff]" />
+            <span>Make my QR Score verifiable. Anyone who scans my QR code sees my first name, last initial and score, and nothing else. I can turn this off any time.</span>
+          </label>
+        </div>
+      ) : null}
+      {scan ? <p className="mb-4 text-[12.5px] leading-snug text-ink-4">We will save the resume you just scanned to your account. Until you create it, we keep your scan for up to 24 hours and then delete it.</p> : null}
       <HumanCheck captcha={captcha} onReady={setHuman} resetKey={s} />
-      <GradientButton pendingText="Creating your account..." disabled={!human}>Create account</GradientButton>
+      <GradientButton pendingText="Creating your account..." disabled={!human}>{scan ? "Save my score and create my account" : "Create account"}</GradientButton>
     </form>
   );
 }
