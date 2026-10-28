@@ -35,7 +35,8 @@ export async function attachGuestScan(userId: number, fullName: string, scan: Gu
   if (!result) throw new Error("That resume could not be scored again.");
   await passport.saveResult(userId, result, scan.fileName, scan.text);
   await resumes.saveAccepted(userId, result, scan.text, { name: scan.fileName ?? "", mime: scan.fileMime, size: scan.fileSize });
-  const qrId = await assignQrId(userId, fullName);
+  // The QR ID is a nicety: if it cannot be made (for example the database has not been migrated yet) the scan is still saved.
+  const qrId = await assignQrId(userId, fullName).catch((e) => { console.error("[claim] QR ID failed:", (e as Error).message); return ""; });
   let published = false;
   if (opts.publish && signingAvailable()) {
     try {

@@ -30,7 +30,8 @@ export default async function QrDashboard({ userId, name, justSaved = false }: {
   }
   const rq = p.rq;
   const sections = sectionsOf(rq);
-  const qrId = await assignQrId(userId, name).catch(async () => (await one<{ qr_id: string | null }>("SELECT qr_id FROM student_profiles WHERE user_id = $1", [userId]))?.qr_id ?? "");
+  // A missing QR ID (or a database that has not been migrated yet) must never break the dashboard: the card simply leaves the ID out.
+  const qrId = await assignQrId(userId, name).catch(() => one<{ qr_id: string | null }>("SELECT qr_id FROM student_profiles WHERE user_id = $1", [userId]).then((r) => r?.qr_id ?? "").catch(() => ""));
   const row = await share.forUser(userId);
   const live = row && row.is_public === 1;
   const svg = live ? await qrSvg(await share.url(row.code, true), 196) : "";

@@ -87,6 +87,11 @@ export function SignupForm({ role, captcha = off, scan }: { role: "student" | "e
       {scan ? <p className="mb-4 text-[12.5px] leading-snug text-ink-4">We will save the resume you just scanned to your account. Until you create it, we keep your scan for up to 24 hours and then delete it.</p> : null}
       <HumanCheck captcha={captcha} onReady={setHuman} resetKey={s} />
       <GradientButton pendingText="Creating your account..." disabled={!human}>{scan ? "Save my score and create my account" : "Create account"}</GradientButton>
+      {!human && captcha.mode !== "off" ? (
+        <p role="status" className="mt-3 text-center text-[13px] leading-snug text-ink-3">
+          {captcha.mode === "image" ? "The button is grey until you type the 6 characters from the picture above." : "Checking that you are a person. This takes a moment, then the button turns on."}
+        </p>
+      ) : null}
     </form>
   );
 }
