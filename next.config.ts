@@ -68,6 +68,16 @@ const nextConfig: NextConfig = {
       "react-icons",
     ],
   },
+  // The VELORA home page and its four division pages are self-contained files in public/velora-static, served at /velora and /velora/<division>.
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: "/velora", destination: "/velora-static/home.html" },
+        { source: "/velora/:division(hire|tech|global|learn)", destination: "/velora-static/:division.html" },
+      ],
+    };
+  },
+
   // Permanent redirects for URLs that were live and then renamed away without
   // one. Each of these 404'd in production, so any accumulated link equity and
   // index presence was being thrown away. `permanent: true` emits a 308, which
