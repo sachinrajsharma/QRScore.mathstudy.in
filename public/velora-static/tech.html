@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>VELORA TECH</title>
 <meta name="description" content="Transform ideas into powerful websites, intelligent web applications, Android and iOS apps, and scalable digital products.">
 <meta name="theme-color" content="#04060f">
@@ -1504,6 +1504,45 @@ a:hover > .dv-go { transform: translateX(4px); }
 
 .vl{--vl-display:"Space Grotesk",system-ui,sans-serif;--vl-text:"Inter",system-ui,sans-serif}
 html{scroll-behavior:smooth;background:#04060f}body{margin:0;background:#04060f}</style>
+<style id="vl-touch">
+/* touch, tablet and safe-area refinements (additive; desktop pointer layouts are unchanged) */
+html { scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.vl-nav, .dv-nav { padding-top: max(12px, env(safe-area-inset-top)); padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+.vl-drawer { padding-bottom: max(24px, env(safe-area-inset-bottom)); padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); overscroll-behavior: contain; }
+.dv-footer { padding-bottom: max(36px, calc(env(safe-area-inset-bottom) + 24px)); padding-left: max(var(--pad), env(safe-area-inset-left)); padding-right: max(var(--pad), env(safe-area-inset-right)); }
+.dv-menu-panel { max-height: calc(100vh - 90px); max-height: calc(100dvh - 90px); overflow-y: auto; overscroll-behavior: contain; }
+.vl-logo, .dv-brand { min-height: 44px; }
+.dv-menu-panel a, .dv-menu-panel .dv-sib { font-size: 0.95em; letter-spacing: 0.08em; min-height: 48px; }
+.dv-menu-panel a[aria-current] { background: rgba(255, 255, 255, 0.09); color: #fff; }
+@media (max-width: 1279px) {
+  /* tablets: keep the division switcher reachable (it only showed from 1280px) */
+  .dv-menu { display: block; margin-left: auto; }
+  .dv-links { margin-right: auto; }
+  .dv-cta { margin-left: auto; }
+}
+@media (min-width: 900px) and (max-width: 1279px) {
+  .dv-menu-panel > a:not(.dv-sib):not([target]) { display: none; }
+  .dv-menu-panel > hr { display: none; }
+  .dv-cta ~ .dv-menu { margin-left: 0; }
+}
+@media (min-width: 1280px) { .dv-menu { display: none; } }
+@media (max-width: 1023px), (pointer: coarse) {
+  .vl-btn, .vl-btn-sm, .vl-btn-quiet { min-height: 44px; }
+  .dv-sib, .dv-footer ul a, .dv-footer a, button.hq-pause, button.hs-pause { min-height: 44px; display: inline-flex; align-items: center; }
+  button.hq-pause, button.hs-pause { min-width: 44px; justify-content: center; }
+  .dv-footer ul a { padding: 10px 0; }
+  .lx-goals button, button[data-dest-chip], button[data-hs-act], button[data-hq-step], button[data-gs-step], button[data-ts-step], button[data-lx-step] { min-height: 44px; }
+  .lx-goals button, button[data-dest-chip] { display: inline-flex; align-items: center; justify-content: center; }
+  button[data-hs-act], button[data-hq-step], button[data-gs-step], button[data-ts-step], button[data-lx-step] { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  details > summary, .dv-faq summary, .dv-lvl summary { min-height: 44px; }
+  .vl-footer ul a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; }
+  .vl-kicker, .vl-eyebrow, .dv-sib, .vl-nav-link { font-size: max(12px, 0.78em); }
+  body { overflow-wrap: break-word; }
+}
+@media (max-width: 480px) {
+  .vl-cta-row .vl-btn { flex: 1 1 100%; }
+}
+</style>
 </head>
 <body>
 <div class="vl">
@@ -2013,6 +2052,16 @@ html{scroll-behavior:smooth;background:#04060f}body{margin:0;background:#04060f}
   else { root.classList.add("live"); clearStages(); cur = -1; setTimeout(function () { go(0, false); schedule(); }, 900); }
 })();
 
+</script>
+<script>
+/* division menu: close on link tap, outside tap or Escape */
+(function(){var m=document.querySelector(".dv-menu");if(!m)return;
+function close(){m.removeAttribute("open")}
+m.addEventListener("click",function(e){if(e.target.closest(".dv-menu-panel a"))close()});
+document.addEventListener("click",function(e){if(m.open&&!m.contains(e.target))close()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&m.open){close();var s=m.querySelector("summary");s&&s.focus()}});
+window.addEventListener("resize",function(){if(window.innerWidth>=1280)close()});
+})();
 </script>
 </body>
 </html>
