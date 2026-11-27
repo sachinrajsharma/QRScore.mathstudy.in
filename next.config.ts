@@ -61,6 +61,8 @@ const nextConfig: NextConfig = {
   // used land in the client bundle (shrinks the big shared chunk that was
   // eating ~4.5s of main-thread script evaluation).
   experimental: {
+    // Support tickets take up to 3 attachments of 10 MB each through a server action (the default limit is 1 MB).
+    serverActions: { bodySizeLimit: "32mb" },
     optimizePackageImports: [
       "framer-motion",
       "@iconify/react",

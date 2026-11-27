@@ -5,6 +5,7 @@ import { currentUser } from "@/lib/portal/guard";
 import { newTicketSchema, ratingSchema, replySchema, isTicketNo } from "@/lib/support/model";
 import { createTicket, rate, replyAsUser } from "@/lib/support/store";
 import { humanCheck } from "@/lib/portal/captcha";
+import { requestCtx, text } from "@/lib/support/request";
 
 /** The person's side of support. Every action starts from the signed-in account: a ticket can only be raised, read or answered by its owner. */
 async function me() {
@@ -12,19 +13,19 @@ async function me() {
   if (!u) redirect("/login?next=" + encodeURIComponent("/support/new"));
   return { id: u.id, name: u.name, email: u.email };
 }
-const back = (path: string, key: "e" | "ok", text: string): never => redirect(`${path}${path.includes("?") ? "&" : "?"}${key}=${encodeURIComponent(text)}`);
-const text = (fd: FormData, k: string): string => (typeof fd.get(k) === "string" ? String(fd.get(k)) : "");
+const back = (path: string, key: "e" | "ok", msg: string): never => redirect(`${path}${path.includes("?") ? "&" : "?"}${key}=${encodeURIComponent(msg)}`);
 
 export async function newTicketAction(fd: FormData): Promise<void> {
   const user = await me();
   if (!(await humanCheck(fd, "support-new"))) return back("/support/new", "e", "The security check was not right. Please try again with the new code.");
   const parsed = newTicketSchema.safeParse({ category: text(fd, "category"), subject: text(fd, "subject"), related_ref: text(fd, "related_ref"), body: text(fd, "body") });
-  if (!parsed.success) back("/support/new", "e", parsed.error.issues[0]?.message ?? "Please check the form.");
-  else {
-    const r = await createTicket(user, parsed.data);
-    if (!r.ok) back("/support/new", "e", r.error);
-    else redirect(`/support/tickets/${r.no}?${r.duplicate ? "ok=" + encodeURIComponent("You already sent this ticket, so we opened it for you.") : "new=1"}`);
-  }
+  if (!parsed.success) return back("/support/new", "e", parsed.error.issues[0]?.message ?? "Please check the form.");
+  const req = await requestCtx(fd);
+  if (!req.ok) return back("/support/new", "e", req.error);
+  const r = await createTicket(user, parsed.data, req.ctx);
+  if (!r.ok) return back("/support/new", "e", r.error);
+  if (r.dropped) redirect(`/support/thanks?no=${r.no}`);
+  redirect(`/support/tickets/${r.no}?${r.duplicate ? "ok=" + encodeURIComponent("You already sent this ticket, so we opened it for you.") : "new=1"}`);
 }
 
 export async function replyAction(fd: FormData): Promise<void> {
@@ -33,13 +34,13 @@ export async function replyAction(fd: FormData): Promise<void> {
   if (!isTicketNo(no)) redirect("/support/tickets");
   const path = `/support/tickets/${no}`;
   if (!(await humanCheck(fd, "support-reply"))) return back(path, "e", "The security check was not right. Please try again with the new code.");
-  const parsed = replySchema.safeParse({ body: text(fd, "body") });
-  if (!parsed.success) back(path, "e", parsed.error.issues[0]?.message ?? "Write your reply.");
-  else {
-    const r = await replyAsUser(user, no, parsed.data.body);
-    if (!r.ok) back(path, "e", r.error);
-    else redirect(`${path}?sent=1#latest`);
-  }
+  const req = await requestCtx(fd);
+  if (!req.ok) return back(path, "e", req.error);
+  const parsed = replySchema.safeParse({ body: text(fd, "body") || (req.ctx.files?.length ? "(attachment)" : "") });
+  if (!parsed.success) return back(path, "e", parsed.error.issues[0]?.message ?? "Write your reply.");
+  const r = await replyAsUser(user, no, parsed.data.body, req.ctx.files);
+  if (!r.ok) return back(path, "e", r.error);
+  redirect(`${path}?sent=1#latest`);
 }
 
 export async function rateAction(fd: FormData): Promise<void> {

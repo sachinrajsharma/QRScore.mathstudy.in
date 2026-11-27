@@ -12,7 +12,7 @@ describe("support ticket rules", () => {
 
   it("validates a new ticket and strips control characters", () => {
     expect(newTicketSchema.safeParse(good).success).toBe(true);
-    expect(newTicketSchema.safeParse({ ...good, category: "nonsense" }).success).toBe(false);
+    expect(newTicketSchema.safeParse({ ...good, category: "Not a slug!" }).success).toBe(false);
     expect(newTicketSchema.safeParse({ ...good, subject: "hi" }).success).toBe(false);
     expect(newTicketSchema.safeParse({ ...good, body: "short" }).success).toBe(false);
     expect(newTicketSchema.safeParse({ ...good, body: "x".repeat(8001) }).success).toBe(false);
@@ -51,5 +51,32 @@ describe("support ticket rules", () => {
     expect(shouldAutoClose("waiting_user", fresh, now)).toBe(false);
     expect(shouldAutoClose("open", old, now)).toBe(false);
     expect(shouldAutoClose("pending", old, now)).toBe(false);
+  });
+});
+
+import { guestTicketSchema, idleCloseHours, isAccessToken, normaliseTicketNo } from "./model";
+
+describe("guest tickets and settings", () => {
+  const guest = { category: "billing", subject: "Payment taken twice", related_ref: "", body: "I was charged twice for the same course today.", name: "Asha Verma", email: "Asha@Example.com ", phone: "" };
+  it("validates a guest ticket and lower-cases the email", () => {
+    const r = guestTicketSchema.parse(guest);
+    expect(r.email).toBe("asha@example.com");
+    expect(guestTicketSchema.safeParse({ ...guest, name: "http://spam.example" }).success).toBe(false);
+    expect(guestTicketSchema.safeParse({ ...guest, name: "Bot 123456" }).success).toBe(false);
+    expect(guestTicketSchema.safeParse({ ...guest, email: "not an email" }).success).toBe(false);
+    expect(guestTicketSchema.safeParse({ ...guest, phone: "12" }).success).toBe(false);
+    expect(guestTicketSchema.safeParse({ ...guest, phone: "+91 98765 43210" }).success).toBe(true);
+  });
+  it("recognises private tokens and ticket numbers typed by staff", () => {
+    expect(isAccessToken("a".repeat(48))).toBe(true);
+    expect(isAccessToken("A".repeat(48))).toBe(false);
+    expect(isAccessToken("a".repeat(47))).toBe(false);
+    expect(normaliseTicketNo(" sup-2026-000001 ")).toBe("SUP-2026-000001");
+  });
+  it("reads the idle-close hours from the environment, with a week as the default", () => {
+    expect(idleCloseHours(undefined)).toBe(168);
+    expect(idleCloseHours("48")).toBe(48);
+    expect(idleCloseHours("0")).toBe(168);
+    expect(idleCloseHours("abc")).toBe(168);
   });
 });
