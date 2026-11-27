@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { supportUser } from "@/lib/support/page";
 import { Card, PortalPage } from "@/components/portal/shell";
-import { categoryLabel } from "@/lib/support/model";
 import { listForUser } from "@/lib/support/store";
 import { StatusBadge, btnPrimary, inputCls, when } from "@/components/support/ui";
 
@@ -32,7 +31,7 @@ export default async function MyTickets({ searchParams }: { searchParams: Promis
                 <Link href={`/support/tickets/${t.no}`} className="flex flex-wrap items-start justify-between gap-3 hover:opacity-90">
                   <span className="min-w-0">
                     <span className="block text-[16px] font-semibold text-ink break-words">{t.subject}{t.unread ? <span className="ml-2 rounded-full bg-red-600 px-2 py-0.5 text-[11.5px] font-bold text-white" aria-label={`${t.unread} unread ${t.unread === 1 ? "reply" : "replies"}`}>{t.unread} new</span> : null}</span>
-                    <span className="block text-[13.5px] text-ink-3">{t.no} · {categoryLabel(t.category)} · updated {when(t.updatedAt)}</span>
+                    <span className="block text-[13.5px] text-ink-3">{t.no} · {t.categoryName} · updated {when(t.updatedAt)}</span>
                   </span>
                   <StatusBadge status={t.status} />
                 </Link>

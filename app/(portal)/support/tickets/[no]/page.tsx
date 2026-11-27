@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supportUser } from "@/lib/support/page";
 import { Card, PortalPage } from "@/components/portal/shell";
-import { canRate, canUserReply, categoryLabel } from "@/lib/support/model";
+import { canRate, canUserReply } from "@/lib/support/model";
 import { getForUser } from "@/lib/support/store";
+import { ACCEPT } from "@/lib/support/attachments";
 import { Flash, StatusBadge, Thread, btnPrimary, inputCls, when } from "@/components/support/ui";
 import { rateAction, replyAction } from "../../actions";
 import { captchaMode, turnstileSiteKey } from "@/lib/portal/captcha";
@@ -23,7 +24,7 @@ export default async function TicketPage({ params, searchParams }: { params: Pro
   if (!data) notFound();
   const { ticket: t, messages } = data;
   return (
-    <PortalPage user={me} active="support" title={t.subject} subtitle={`${t.no} · ${categoryLabel(t.category)}`} wide>
+    <PortalPage user={me} active="support" title={t.subject} subtitle={`${t.no} · ${t.categoryName}`} wide>
       <p className="mb-4 text-[14px]"><Link href="/support/tickets" className="underline">All my tickets</Link></p>
       {sp.new ? <Flash ok="Your ticket is open. We emailed you a copy, and we will reply here." /> : null}
       {sp.sent ? <Flash ok="Your reply was sent." /> : null}
@@ -53,10 +54,12 @@ export default async function TicketPage({ params, searchParams }: { params: Pro
 
       {canUserReply(t.status) ? (
         <Card title={t.status === "resolved" ? "Still need help? Reply to reopen" : "Reply"} className="mt-5">
-          <form action={replyAction} className="grid gap-3">
+          <form action={replyAction} encType="multipart/form-data" className="grid gap-3">
             <input type="hidden" name="no" value={t.no} />
             <label htmlFor="body" className="sr-only">Your reply</label>
-            <textarea id="body" name="body" required minLength={2} maxLength={8000} rows={5} placeholder="Type your reply" className={`${inputCls} min-h-[130px]`} />
+            <textarea id="body" name="body" minLength={2} maxLength={8000} rows={5} placeholder="Type your reply" className={`${inputCls} min-h-[130px]`} />
+            <label htmlFor="attachments" className="text-[14px] text-ink-3">Attach files (JPG, PNG or PDF, up to 3, 10 MB each)</label>
+            <input id="attachments" name="attachments" type="file" multiple accept={ACCEPT} className={`${inputCls} py-2`} />
             <CheckedSubmit captcha={captcha} label="Send reply" className={btnPrimary} />
           </form>
         </Card>

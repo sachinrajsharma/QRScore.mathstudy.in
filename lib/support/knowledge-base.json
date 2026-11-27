@@ -1,0 +1,10 @@
+[
+  { "cats": ["billing"], "q": "I paid but cannot see my purchase", "a": "Open Billing in your account first: paid orders and invoices appear there within a few minutes. If it is still missing after an hour, raise a ticket under Billing and payments with the reference from your receipt." },
+  { "cats": ["billing"], "q": "I need an invoice or receipt", "a": "Reply on your ticket with your order reference and the name you want on the invoice, and we will send a receipt within one working day." },
+  { "cats": ["account"], "q": "I cannot log in or forgot my password", "a": "Use Forgot password on the login page and check your spam folder. If the email never arrives, raise a ticket from the email address you signed up with and we will help you regain access." },
+  { "cats": ["technical"], "q": "Something is not working as expected", "a": "Try refreshing the page or a different browser first. If the problem remains, tell us what you clicked, what you expected, what happened instead, and attach a screenshot." },
+  { "cats": ["abroad"], "q": "How do I upload my documents for a university application?", "a": "Open Study abroad in your account, then Documents. Uploads are scanned and stored privately. If a file is refused, check it is a PDF, JPG or PNG under 10 MB." },
+  { "cats": ["abroad"], "q": "Who sees my passport and visa documents?", "a": "Only you and the counselor assigned to you. Documents are kept in a private vault and every download is logged." },
+  { "cats": ["courses"], "q": "I enrolled but the course is not in My courses", "a": "Enrolment appears within a few minutes of payment. Refresh My courses; if it is still missing after an hour, raise a ticket with your order reference." },
+  { "cats": ["internships"], "q": "How do I check the status of my application?", "a": "Open Applications in your account. Each application shows its current stage and any message from the employer." }
+]
